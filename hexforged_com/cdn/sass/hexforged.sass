@@ -1,0 +1,346 @@
+/**
+ *
+ * $KYAULabs: hexforged.sass,v 1.0.1 2024/07/09 14:00:18 -0700 kyau Exp $
+ * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+ * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
+ * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
+ * ▪ ██▄█ ██▀  ▀█▄▀ ██▀  ██ █ ██▄▀ ██ ▄▄ ██▀  ██ █ ▪
+ * █ ██ █ ██ █ ██ █ ██   ██ █ ██ █ ██ ▀█ ██ █ ██ █ █
+ * ▄ ▀▀ ▀ ▀▀▀▀ ▀▀ ▀ ▀▀   ▀▀▀▀ ▀▀ ▀ ▀▀▀▀▀ ▀▀▀▀ ▀▀▀▀ █
+ * ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+ *
+ * Hexforged
+ * Copyright (C) 2024 KYAU Labs (https://kyaulabs.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+$bg: rgb(19, 20, 23)
+$bg-footer: rgba(0,0,0,0.35)
+$panel: rgb(38, 40, 45)
+$color: rgba(180,180,180,1.0)
+$color-footer: rgb(128, 128, 128)
+$color-header: rgba(222,222,222,1.0)
+$fontstack: Sava, Georgia, Times, "Times New Roman", serif
+$fontstack-mono: Agave, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+
+$screen-small: 576px
+$screen-medium: 768px
+$screen-large: 992px
+$screen-xlarge: 1200px
+
+/**
+ * Mixins
+ */
+@mixin font-face($font-name, $file, $ext: 'ttf', $weight: 400, $style: normal)
+  $filepath: '//cdn.hexforged.com/fonts/' + $file
+
+  @font-face
+    font-family: '#{$font-name}'
+    src: url($filepath + '.' + $ext) format('truetype')
+    font-weight: $weight
+    font-style: $style
+
+@mixin font-size($font-size)
+  font-size: $font-size
+  line-height: calc(#{$font-size} * 1.1)
+
+// mobile-first design
+@mixin screen-min($min)
+  @media (min-width: $min)
+    @content
+
+// desktop-first design
+@mixin screen-max($max)
+  @media (max-width: $max - 0.02)
+    @content
+
+// hybrid design
+@mixin screen-minmax($min, $max)
+  @media (min-width: $min) and (max-width: $max - 0.02)
+    @content
+
+
+/**
+ * Family: Agave v37
+ * https://github.com/blobject/agave
+ */
+@include font-face('Agave', 'Agave-Regular', 'ttf')
+@include font-face('Agave', 'Agave-Bold', 'ttf', 700)
+
+/**
+ * Family: Sava Pro
+ * https://www.fontspring.com/fonts/adobe/sava-pro
+ */
+@include font-face('Sava', 'SavaPro-Regular', 'otf')
+@include font-face('Sava', 'SavaPro-Light', 'otf', 300)
+@include font-face('Sava', 'SavaPro-Medium', 'otf', 500)
+@include font-face('Sava', 'SavaPro-Semibold', 'otf', 600)
+@include font-face('Sava', 'SavaPro-Bold', 'otf', 700)
+@include font-face('Sava', 'SavaPro-Black', 'otf', 900)
+
+
+/**
+ * Globals
+ */
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+
+html, body, header, main, footer
+  width: 100%
+
+body
+  position: fixed
+  top: 0
+  bottom: 0
+  left: 0
+  height: 100%
+
+body
+  background: $bg
+  backdrop-filter: blur(32px)
+  color: $color
+  font-family: $fontstack
+  @include font-size(12pt)
+  overflow: hidden
+  text-shadow: 0 0 5px rgba(255,255,255,0.2)
+
+a ,a:link, a:active, a:visited, a:hover
+  text-decoration: none
+
+h1,h2,h3,h4,h5,h6
+  font-family: $fontstack
+  font-weight: 700
+
+h1
+  @include font-size(22pt)
+  @media (max-width: 768px)
+    @include font-size(18pt)
+
+h2
+  @include font-size(20pt)
+  @media (max-width: 768px)
+    @include font-size(16pt)
+
+h3
+  @include font-size(18pt)
+  @media (max-width: 768px)
+    @include font-size(14pt)
+
+h4
+  @include font-size(16pt)
+  @media (max-width: 768px)
+    @include font-size(12pt)
+
+h5
+  @include font-size(14pt)
+  @media (max-width: 768px)
+    @include font-size(10pt)
+
+h6
+  @include font-size(12pt)
+  @media (max-width: 768px)
+    @include font-size(8pt)
+
+
+/**
+ * Header
+ */
+header
+  color: $color-header
+  position: fixed
+  top: 0
+  height: 384px
+  z-index: 4
+
+  #logo
+    position: absolute
+    top: 35%
+    left: 50%
+    @include screen-max($screen-medium)
+      content: url('//cdn.hexforged.com/images/logo@256x.png')
+      margin-left: -128px
+      width: 256px
+    @include screen-minmax($screen-medium, $screen-xlarge)
+      content: url('//cdn.hexforged.com/images/logo@384x.png')
+      margin-left: -192px
+      width: 384px
+    @include screen-min($screen-xlarge)
+      content: url('//cdn.hexforged.com/images/logo@512x.png')
+      margin-left: -256px
+      width: 512px
+
+
+/**
+ * Main
+ */
+main
+  position: absolute
+  left: 0
+  height: 100%
+  width: 100%
+  text-align: center
+  z-index: 3
+  @include screen-max($screen-medium)
+    top: calc(135px + 175px)
+  @include screen-minmax($screen-medium, $screen-xlarge)
+    top: calc(135px + 250px)
+  @include screen-min($screen-xlarge)
+    top: calc(135px + 350px)
+  
+  &#not-found, &#restricted, &#server-error
+    top: 0
+    height: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+
+  &#not-found
+    a
+      @include screen-max($screen-medium)
+        background-image: url('//cdn.hexforged.com/images/404-flat-dark@256x.png')
+        height: 182px
+        width: 256px
+      @include screen-minmax($screen-medium, $screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/404-flat-dark@384x.png')
+        height: 273px
+        width: 384px
+      @include screen-min($screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/404-flat-dark@512x.png')
+        height: 364px
+        width: 512px
+
+  &#restricted
+    a
+      @include screen-max($screen-medium)
+        background-image: url('//cdn.hexforged.com/images/403-flat-dark@256x.png')
+        height: 199px
+        width: 256px
+      @include screen-minmax($screen-medium, $screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/403-flat-dark@384x.png')
+        height: 299px
+        width: 384px
+      @include screen-min($screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/403-flat-dark@512x.png')
+        height: 398px
+        width: 512px
+
+  &#server-error
+    a
+      @include screen-max($screen-medium)
+        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@256x.png')
+        height: 184px
+        width: 256px
+      @include screen-minmax($screen-medium, $screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@384x.png')
+        height: 276px
+        width: 384px
+      @include screen-min($screen-xlarge)
+        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@512x.png')
+        height: 368px
+        width: 512px
+
+  i
+    margin: 2em 0 0
+    padding: 0 0.5ch
+    text-shadow: 0 1px 0 rgba(153,153,153,1), 0 2px 0 rgba(119,119,119,1), 0 3px 0 rgba(85,85,85,1), 0 4px 0 rgba(51,51,51,1), 0 5px 4px rgba(0,17,53,1), 0 0 4px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)
+    &.fa-battle-net
+      color: rgb(21, 142, 255)
+    &.fa-discord, &.fa-github
+      color: rgb(255, 255, 255)
+
+  p.login-auth
+    @include font-size(14pt)
+    font-weight: 600
+    margin-top: 2em
+
+    a
+      color: $color-footer
+
+      &:hover
+        color: rgb(124, 169, 208)
+    
+    a:nth-child(1)
+      margin-left: 4ch
+
+    span
+      color: rgb(242, 176, 72)
+      font-weight: 900
+      margin: 0 0.5ch
+
+  .panel
+    background: $panel
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5)
+    border-radius: 6px
+
+
+/**
+ * Footer
+ */
+footer
+  background: $bg-footer
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5)
+  color: $color-footer
+  @include font-size(12pt)
+  display: flex
+  align-items: center
+  justify-content: space-between
+  justify-items: center
+  position: fixed
+  bottom: 0
+  padding: 1em 0 1em
+  width: 100%
+  text-align: center
+  text-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,1)
+  z-index: 3
+  @include screen-max($screen-medium)
+    @include font-size(10pt)
+
+  p
+    display: inline-block
+    padding: 0 1em
+    text-align: left
+
+  p:nth-child(2), p:nth-child(3)
+    font-weight: 700
+  
+  p:nth-child(1)
+    i
+      color: $color-footer
+      margin-right: 0.5ch
+      @include screen-max($screen-medium)
+        font-size: 1em
+      @include screen-min($screen-medium)
+        font-size: 2em
+
+      &:hover
+        color: rgb(222, 222, 222)
+
+  p:nth-child(2)
+    font-family: $fontstack-mono
+    text-align: center
+
+    img
+      position: relative
+      top: -1px
+      vertical-align: middle
+
+  p:nth-child(3)
+    font-family: $fontstack-mono
+    text-align: right
+    @include screen-max($screen-medium)
+      span
+        display: none

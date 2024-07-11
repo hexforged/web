@@ -1,0 +1,27 @@
+# Fonts
+*.otf
+*.ttf
+*.woff2
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+!hexforged_com/cdn/images/logo@256x.png
+
+# Checksum files
+*.sha512
+
+# Compressed files
+*.min.js
+*.min.css
+
+# Source maps
+*.min.map
+*.min.css.map
+
+# Visual Studio cache directory
+*/.vs/
+.vs/
