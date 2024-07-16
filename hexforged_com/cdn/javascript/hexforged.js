@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.0 2024/07/08 19:23:54 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.1 2024/07/13 15:04:25 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -56,6 +56,7 @@ const msRealDay = 24 * 60 * 60 * 1000; // milliseconds in a real day
 let basisDate = new Date();
 let lastDateTime = "";
 let lastIcon = "";
+let recaptcha = null;
 
 /*
  * Console Log
@@ -120,8 +121,16 @@ function processData(keyword, data) {
       lastIcon = $("footer img#gameTimeIcon").src;
       // begin gametime loop
       setInterval(() => getGameTime(), 250);
-    } else if (keyword === "header") {
+    } else if (keyword.substr(0, 6) === "header") {
       $("header").html(data);
+    } else {
+      $("#" + keyword).html(data);
+      // render recaptcha if found
+      if ($("#recaptcha").length) {
+        recaptcha = grecaptcha.render("recaptcha", {
+          sitekey: $("#recaptcha").data("sitekey"),
+        });
+      }
     }
   }, DELAY);
 }
@@ -170,8 +179,44 @@ $(function () {
     !$("main").is("#restricted") &&
     !$("main").is("#server-error")
   ) {
-    getData(manager, "header");
-    getData(manager, "main");
+    if (
+      $("main").is("#register") ||
+      $("main").is("#login") ||
+      $("main").is("#dashboard")
+    ) {
+      if ($("main").is("#dashboard")) {
+        getData(manager, "header");
+      } else {
+        getData(manager, "header-medium");
+      }
+      getData(manager, $("main").attr("id"));
+    } else {
+      getData(manager, "header-large");
+      getData(manager, "main");
+    }
   }
   getData(manager, "footer");
+
+  $(document).on("input", "input.hex-input__input", function (event) {
+    // log("Input Value: {" + this.value + "}.", "WARNING", "#9aa0a6");
+    if (this.value) {
+      $(this).addClass("hex-input--has-value");
+    } else {
+      $(this).removeClass("hex-input--has-value");
+    }
+  });
+  $(document).on("click", "label.hex-input__label", function (event) {
+    $(this).prev().focus();
+  });
+  $(document).on("click", "input.hex-checkbox__input", function (event) {
+    if ($(".hex-checkbox__override-icon").length) {
+      $(".hex-checkbox__override-icon").remove();
+      $(this).prop("checked", false);
+    } else {
+      $(this).after(
+        '<i class="fa-solid fa-check hex-color__green hex-checkbox__override-icon"></i>'
+      );
+      $(this).prop("checked", true);
+    }
+  });
 });

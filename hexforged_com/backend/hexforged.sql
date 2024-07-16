@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.0 2024/07/11 03:15:08 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.1 2024/07/13 15:03:53 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -112,7 +112,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
         `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'User ID',
         `gid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Group ID',
-        `login` varchar(64) NOT NULL COMMENT 'User Name',
+        `username` varchar(64) NOT NULL COMMENT 'User Name',
         `passwd` varchar(60) NOT NULL COMMENT 'Password Hash (Bcrypt)',
         `email` varchar(100) NOT NULL COMMENT 'Email Address',
         `token` binary(16) DEFAULT NULL COMMENT 'User Login Token',

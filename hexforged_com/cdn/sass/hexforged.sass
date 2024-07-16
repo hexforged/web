@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.1 2024/07/09 14:00:18 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.0.3 2024/07/13 23:52:29 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,11 +27,12 @@
  */
 
 $bg: rgb(19, 20, 23)
-$bg-footer: rgba(0,0,0,0.35)
-$panel: rgb(38, 40, 45)
-$color: rgba(180,180,180,1.0)
-$color-footer: rgb(128, 128, 128)
-$color-header: rgba(222,222,222,1.0)
+$bg-panel: rgba(0, 0, 0, 0.5)
+$bg-panel-shadow: rgba(0, 0, 0, 0.65)
+$color: rgb(150, 150, 150)
+$color-highlight: rgb(222, 222, 222)
+$color-gold: rgb(217, 186, 120)
+$color-border: rgb(45, 41, 28)
 $fontstack: Sava, Georgia, Times, "Times New Roman", serif
 $fontstack-mono: Agave, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
 
@@ -39,6 +40,7 @@ $screen-small: 576px
 $screen-medium: 768px
 $screen-large: 992px
 $screen-xlarge: 1200px
+
 
 /**
  * Mixins
@@ -79,6 +81,7 @@ $screen-xlarge: 1200px
 @include font-face('Agave', 'Agave-Regular', 'ttf')
 @include font-face('Agave', 'Agave-Bold', 'ttf', 700)
 
+
 /**
  * Family: Sava Pro
  * https://www.fontspring.com/fonts/adobe/sava-pro
@@ -118,12 +121,18 @@ body
   overflow: hidden
   text-shadow: 0 0 5px rgba(255,255,255,0.2)
 
-a ,a:link, a:active, a:visited, a:hover
+a ,a:link, a:active, a:visited
+  color: $color-highlight
   text-decoration: none
 
+  &:hover
+    text-decoration: underline
+
 h1,h2,h3,h4,h5,h6
+  color: $color-gold
   font-family: $fontstack
   font-weight: 700
+  margin-bottom: 1ch
 
 h1
   @include font-size(22pt)
@@ -160,28 +169,43 @@ h6
  * Header
  */
 header
-  color: $color-header
+  color: $color-highlight
   position: fixed
   top: 0
-  height: 384px
-  z-index: 4
+  height: 128px
 
   #logo
     position: absolute
-    top: 35%
     left: 50%
-    @include screen-max($screen-medium)
-      content: url('//cdn.hexforged.com/images/logo@256x.png')
+    margin-left: -64px
+    top: 22px
+
+  &#header-medium
+    height: 180px
+
+    #logo
       margin-left: -128px
-      width: 256px
-    @include screen-minmax($screen-medium, $screen-xlarge)
-      content: url('//cdn.hexforged.com/images/logo@384x.png')
-      margin-left: -192px
-      width: 384px
-    @include screen-min($screen-xlarge)
-      content: url('//cdn.hexforged.com/images/logo@512x.png')
-      margin-left: -256px
-      width: 512px
+      top: 6px
+
+  &#header-large
+    height: 384px
+
+    #logo
+      position: absolute
+      top: 35%
+      left: 50%
+      @include screen-max($screen-medium)
+        content: url('//cdn.hexforged.com/images/logo@256x.png')
+        margin-left: -128px
+        width: 256px
+      @include screen-minmax($screen-medium, $screen-xlarge)
+        content: url('//cdn.hexforged.com/images/logo@384x.png')
+        margin-left: -192px
+        width: 384px
+      @include screen-min($screen-xlarge)
+        content: url('//cdn.hexforged.com/images/logo@512x.png')
+        margin-left: -256px
+        width: 512px
 
 
 /**
@@ -193,14 +217,127 @@ main
   height: 100%
   width: 100%
   text-align: center
-  z-index: 3
   @include screen-max($screen-medium)
     top: calc(135px + 175px)
   @include screen-minmax($screen-medium, $screen-xlarge)
     top: calc(135px + 250px)
   @include screen-min($screen-xlarge)
     top: calc(135px + 350px)
+
+  &#dashboard
+    top: 128px
   
+  &#login, &#register
+    top: 180px
+
+    form
+      background-color: $bg-panel
+      border-radius: 0.5rem
+      box-shadow: 0 4px 30px $bg-panel-shadow
+      display: flex
+      flex-direction: column
+      gap: 0.4rem
+      margin: 0 auto
+      padding: 1rem
+      width: 22rem
+
+      .hex-checkbox
+        align-items: center
+        cursor: pointer
+        display: inline-flex
+        text-align: left
+
+        &:checked
+          box-shadow: 0 0 2px 1px $color-gold, 0 0 0 2px $color-border, inset 0 0 1px #28334133, inset 0 1px 1px #2833411a, inset 0 2px 2px #2833411a
+
+        .hex-checkbox__input
+          appearance: none
+          background-color: rgb(0, 0, 0)
+          border: 1px solid $color-border
+          border-radius: 0.2em
+          box-shadow: inset 0 0 1px #28334133, inset 0 1px 1px #2833411a, inset 0 2px 2px #2833411a
+          flex: 0 0 1.2em
+          margin-right: 0.5em
+          height: 1.2em
+          width: 1.2em
+
+        .hex-checkbox__override-icon
+          position: absolute
+          pointer-events: none
+          height: 1.2em
+          width: 1.2em
+          padding: 0.1em
+
+
+      .hex-input
+        display: flex
+        align-items: center
+        position: relative
+        outline: none
+
+        .hex-input__input
+          align-self: stretch
+          background: rgb(0,0,0)
+          border: 1px solid $color-border
+          border-radius: 0.5em
+          box-shadow: inset 0 0 1px #28334133, inset 0 1px 1px #2833411a, inset 0 2px 2px #2833411a
+          color: $color
+          font-family: inherit
+          @include font-size(12pt)
+          line-height: 1.65
+          outline: none
+          padding: 1.2em 0.6em 0.4em
+          width: 100%
+
+          &:focus
+            box-shadow: 0 0 2px 1px $color-gold, 0 0 0 2px $color-border, inset 0 0 1px #28334133, inset 0 1px 1px #2833411a, inset 0 2px 2px #2833411a
+
+        .hex-input__label
+          position: absolute
+          top: 1.5em
+          left: 0
+          color: $color-gold
+          cursor: text
+          padding: 0.8em
+          padding-top: 1.1em
+          transition: transform 0.15s
+          transform-origin: top left
+          transform: translateY(-50%)
+
+        .hex-input--has-value+.hex-input__label:not(.hex-input--labelless),
+        .hex-input__input:focus+.hex-input__label:not(.hex-input--labelless)
+          transform: translateY(calc(-50% - 0.4em)) scale(.8)
+
+      .hex-btn__submit
+        background: transparent
+        border: none
+        padding: 1px
+        display: inline-block
+        cursor: pointer
+        text-decoration: none
+        color: rgb(195, 225, 248)
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3)
+
+        &:hover
+          color: rgb(255, 255, 255)
+
+        span
+          background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
+          background-position: 50%
+          background-size: 330% 100%
+          border-radius: 0.25em
+          box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2)
+          font-family: $fontstack
+          font-size: 12pt
+          line-height: 2.0
+          padding: 0.5em 2em
+
+          &:hover
+            background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5)
+            background-position: 25%
+            background-size: 330% 100%
+
   &#not-found, &#restricted, &#server-error
     top: 0
     height: 100%
@@ -254,35 +391,28 @@ main
         width: 512px
 
   i
-    margin: 2em 0 0
-    padding: 0 0.5ch
-    text-shadow: 0 1px 0 rgba(153,153,153,1), 0 2px 0 rgba(119,119,119,1), 0 3px 0 rgba(85,85,85,1), 0 4px 0 rgba(51,51,51,1), 0 5px 4px rgba(0,17,53,1), 0 0 4px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)
-    &.fa-battle-net
-      color: rgb(21, 142, 255)
-    &.fa-discord, &.fa-github
-      color: rgb(255, 255, 255)
+    &.fa-address-card
+      color: rgb(102, 178, 178)
+      text-shadow: none
 
   p.login-auth
     @include font-size(14pt)
     font-weight: 600
-    margin-top: 2em
+    margin-top: 2rem
 
     a
-      color: $color-footer
+      color: $color
 
       &:hover
         color: rgb(124, 169, 208)
     
-    a:nth-child(1)
-      margin-left: 4ch
-
     span
       color: rgb(242, 176, 72)
       font-weight: 900
       margin: 0 0.5ch
 
   .panel
-    background: $panel
+    background: $bg-panel
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5)
     border-radius: 6px
 
@@ -291,9 +421,8 @@ main
  * Footer
  */
 footer
-  background: $bg-footer
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5)
-  color: $color-footer
+  background: $bg-panel
+  box-shadow: 0 4px 30px $bg-panel-shadow
   @include font-size(12pt)
   display: flex
   align-items: center
@@ -305,7 +434,6 @@ footer
   width: 100%
   text-align: center
   text-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,1)
-  z-index: 3
   @include screen-max($screen-medium)
     @include font-size(10pt)
 
@@ -319,15 +447,12 @@ footer
   
   p:nth-child(1)
     i
-      color: $color-footer
+      color: $color
       margin-right: 0.5ch
-      @include screen-max($screen-medium)
-        font-size: 1em
-      @include screen-min($screen-medium)
-        font-size: 2em
+      font-size: 1em
 
       &:hover
-        color: rgb(222, 222, 222)
+        color: $color-highlight
 
   p:nth-child(2)
     font-family: $fontstack-mono
@@ -344,3 +469,123 @@ footer
     @include screen-max($screen-medium)
       span
         display: none
+
+
+/**
+ * Alignment
+ */
+.hex-align__left
+  text-align: left
+
+.hex-align__center
+  text-align: center
+
+.hex-align__right
+  text-align: right
+
+
+/**
+ * Containers
+ */
+.hex-display__inline
+  display: inline-block
+
+
+/**
+ * Color Theme
+ */
+.hex-color__black
+  color: rgb(9,12,25)
+  text-shadow: 0 0 5px rgba(9,12,25,0.2)
+
+.hex-color__white
+  color: rgb(219,221,228)
+  text-shadow: 0 0 5px rgba(219,221,228,0.2)
+
+.hex-color__blue
+  color: rgb(58,87,215)
+  text-shadow: 0 0 5px rgba(58,87,215,0.2)
+
+.hex-color__cyan
+  color: rgb(37,143,143)
+  text-shadow: 0 0 5px rgba(37,143,143,0.2)
+
+.hex-color__green
+  color: rgb(26,170,19)
+  text-shadow: 0 0 5px rgba(26,170,19,0.2)
+
+.hex-color__grey
+  color: rgb(100,99,97)
+  text-shadow: 0 0 5px rgba(100,99,97,0.2)
+
+.hex-color__magenta
+  color: rgb(190,0,127)
+  text-shadow: 0 0 5px rgba(190,0,127,0.2)
+
+.hex-color__red
+  color: rgb(190,25,25)
+  text-shadow: 0 0 5px rgba(190,25,25,0.2)
+
+.hex-color__yellow
+  color: rgb(255,170,62)
+  text-shadow: 0 0 5px rgba(255,170,62,0.2)
+
+.hex-color__h_blue
+  color: rgb(80,124,255)
+  text-shadow: 0 0 5px rgba(80,124,255,0.2)
+
+.hex-color__h_cyan
+  color: rgb(77,197,220)
+  text-shadow: 0 0 5px rgba(77,197,220,0.2)
+
+.hex-color__h_green
+  color: rgb(93,206,51)
+  text-shadow: 0 0 5px rgba(93,206,51,0.2)
+
+.hex-color__h_grey
+  color: rgb(174,174,174)
+  text-shadow: 0 0 5px rgba(174,174,174,0.2)
+
+.hex-color__h_magenta
+  color: rgb(230,113,211)
+  text-shadow: 0 0 5px rgba(230,113,211,0.2)
+
+.hex-color__h_red
+  color: rgb(220,47,50)
+  text-shadow: 0 0 5px rgba(220,47,50,0.2)
+
+.hex-color__h_yellow
+  color: rgb(250,221,45)
+  text-shadow: 0 0 5px rgba(250,221,45,0.2)
+
+
+/**
+ * Margin & Padding
+ */
+.hex-margin__left-one
+  margin-left: 1rem
+
+.hex-margin__left-two
+  margin-left: 2rem
+
+.hex-margin__right-one
+  margin-right: 1rem
+
+.hex-margin__right-two
+  margin-right: 2rem
+
+.hex-margin__top-one
+  margin-top: 1rem
+
+.hex-margin__top-two
+  margin-top: 2rem
+
+
+/**
+ * Recaptcha v2
+ */
+#recaptcha
+  margin-top: 1rem
+
+  div
+    margin: 0 auto

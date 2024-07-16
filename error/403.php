@@ -50,8 +50,7 @@ $hexforged->preload = [
 ];
 $hexforged->css = [
     '../hexforged_com/cdn/css/fontawesome.min.css' => '//cdn.hexforged.com/css/fontawesome.min.css',
-    '../hexforged_com/cdn/css/brands.min.css' => '//cdn.hexforged.com/css/brands.min.css',
-    '../hexforged_com/cdn/css/solid.min.css' => '//cdn.hexforged.com/css/solid.min.css',
+    '../hexforged_com/cdn/css/fa-all.min.css' => '//cdn.hexforged.com/css/fa-all.min.css',
     '../hexforged_com/cdn/css/hexforged.min.css' => '//cdn.hexforged.com/css/hexforged.min.css',
 ];
 $hexforged->js = [

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: frontend.php,v 1.0.1 2024/07/10 14:53:09 -0700 kyau Exp $
+ * $KYAULabs: frontend.php,v 1.0.2 2024/07/15 17:23:06 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -32,12 +32,6 @@ namespace Hexforged;
 include_once(__DIR__ . '/../../aurora/sql.inc.php');
 $sql ??= new \KYAULabs\SQLHandler('hexforged');
 
-ini_set('default_charset', 'UTF-8');
-mb_internal_encoding('UTF-8');
-mb_http_output('UTF-8');
-
-date_default_timezone_set('UTC');
-
 /**
  * Hexforged
  *
@@ -47,6 +41,11 @@ date_default_timezone_set('UTC');
  */
 class Frontend
 {
+    /**
+     * @var array GAME_DAY Days of the week in the game.
+     * @var array GAME_MONTH Months of the year in the game.
+     * @var array $phrases List of phrases used for the page title.
+     */
     const GAME_DAY = ["Moonday", "Fireday", "Earthday", "Lightday", "Iceday", "Waterday", "Cosmicday"];
     const GAME_MONTH = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -54,7 +53,13 @@ class Frontend
         'Realms Unleashed'
     ];
 
-    private static function getActualGameTime(int $gameStartTime)
+    /**
+     * Calculate the actual game time based on the start time.
+     *
+     * @param int $gameStartTime The start time of the game in Unix timestamp.
+     * @return array Associative array containing year, month, day, hour, minute, second, and weekday.
+     */
+    private static function getActualGameTime(int $gameStartTime): array
     {
         $msRealDay = (24 * 60 * 60 * 1000); // milliseconds in a real day
 
@@ -71,7 +76,12 @@ class Frontend
         ];
     }
 
-    public static function getGameTime()
+    /**
+     * Get the current game time as a formatted string.
+     *
+     * @return string The current game time in a formatted string with an icon.
+     */
+    public static function getGameTime(): string
     {
         global $sql;
         // retrieve from database, table for current league
@@ -82,7 +92,13 @@ class Frontend
         return '<img id="gameTimeIcon" src="' . $gameTimeIcon . '" /> <span data-start="' . date('Y-m-d-H-i-s', $worldStart) . '">' . self::GAME_DAY[$gameTime['weekday']] . ', ' . self::GAME_MONTH[$gameTime['month']] . ' ' . $gameTime['day'] . ' ' . $gameTime['year'] . 'CE &mdash; ' . sprintf('%02d', $gameTime['hour']) . ':' . sprintf('%02d', $gameTime['minute']) . '</span>';
     }
 
-    public static function getTitle(string $hardwire = "")
+    /**
+     * Get the title of the page, optionally hardwiring a specific title.
+     *
+     * @param string $hardwire Optional hardwired title.
+     * @return string The page title.
+     */
+    public static function getTitle(string $hardwire = ""): string
     {
         if ($hardwire !== "") {
             return 'Hexforged: ' . $hardwire;
@@ -91,7 +107,12 @@ class Frontend
         return 'Hexforged: ' . self::$phrases[$rand];
     }
 
-    public static function getVersion()
+    /**
+     * Get the current version of the game.
+     *
+     * @return string The current version formatted as major.minor.patch-codename.
+     */
+    public static function getVersion(): string
     {
         global $sql;
         // return version and hex string that updates daily
@@ -100,7 +121,12 @@ class Frontend
         return $version->major . '.' . $version->minor . '.' . $version->patch . '<span>-' . $version->codename . '</span>';
     }
 
-    public static function uuidv4()
+    /**
+     * Generate a UUID (v4).
+     *
+     * @return string The generated UUID.
+     */
+    public static function uuidv4(): string
     {
         $data = random_bytes(16);
 

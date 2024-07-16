@@ -50,8 +50,7 @@ $hexforged->preload = [
 ];
 $hexforged->css = [
     '../cdn/css/fontawesome.min.css' => '//cdn.hexforged.com/css/fontawesome.min.css',
-    '../cdn/css/brands.min.css' => '//cdn.hexforged.com/css/brands.min.css',
-    '../cdn/css/solid.min.css' => '//cdn.hexforged.com/css/solid.min.css',
+    '../cdn/css/fa-all.min.css' => '//cdn.hexforged.com/css/fa-all.min.css',
     '../cdn/css/hexforged.min.css' => '//cdn.hexforged.com/css/hexforged.min.css',
 ];
 $hexforged->js = [
@@ -60,7 +59,7 @@ $hexforged->js = [
 ];
 $hexforged->htmlHeader();
 // <content>
-echo "\t<header></header>\n\t<main></main>\n\t<footer></footer>\n";
+echo "\t<header id=\"header-large\"></header>\n\t<main></main>\n\t<footer></footer>\n";
 // </content>
 $hexforged->htmlFooter();
 echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);
