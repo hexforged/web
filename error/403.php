@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: 403.php,v 1.0.0 2024/07/08 19:23:28 -0700 kyau Exp $
+ * $KYAULabs: 403.php,v 1.0.1 2024/07/17 13:47:05 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -30,10 +30,9 @@
 
 $rus = getrusage();
 require_once("../aurora/aurora.inc.php");
-require_once("../hexforged_com/backend/frontend.php");
 
 $hexforged = new KYAULabs\Aurora("index.html", "/nginx/https/hexforged_com/www", "hexforged.com", true, true);
-$hexforged->title = Hexforged\Frontend::getTitle('403 Access Restricted!');
+$hexforged->title = 'Hexforged: 403 Access Restricted!';
 $hexforged->description = "A multiplayer RPG prototype developed by KYAU Labs.";
 $hexforged->api = ["cdn.hexforged.com"];
 $hexforged->preload = [

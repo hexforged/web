@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.1 2024/07/13 15:04:25 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.3 2024/07/16 03:23:01 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,7 +26,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Delay constant in milliseconds.
+ * @constant {number}
+ */
 const DELAY = 250;
+
+/**
+ * Array of game day names.
+ * @constant {string[]}
+ */
 const GAME_DAY = new Array(
   "Moonday",
   "Fireday",
@@ -36,6 +45,11 @@ const GAME_DAY = new Array(
   "Waterday",
   "Cosmicday"
 );
+
+/**
+ * Array of game month abbreviations.
+ * @constant {string[]}
+ */
 const GAME_MONTH = new Array(
   "",
   "Jan",
@@ -51,15 +65,49 @@ const GAME_MONTH = new Array(
   "Nov",
   "Dec"
 );
-const msRealDay = 24 * 60 * 60 * 1000; // milliseconds in a real day
 
+/**
+ * Milliseconds in a real day.
+ * @constant {number}
+ */
+const msRealDay = 24 * 60 * 60 * 1000;
+
+/**
+ * Basis date used for calculations.
+ * @type {Date}
+ */
 let basisDate = new Date();
+
+/**
+ * Stores the last date and time string.
+ * @type {string}
+ */
 let lastDateTime = "";
+
+/**
+ * Stores the last icon URL.
+ * @type {string}
+ */
 let lastIcon = "";
+
+/**
+ * Stores the last submit button.
+ * @type {string}
+ */
+let lastSubmit = "";
+
+/**
+ * Recaptcha instance.
+ * @type {Object|null}
+ */
 let recaptcha = null;
 
-/*
- * Console Log
+/**
+ * Logs a message to the console with a specific section and color.
+ *
+ * @param {string} message - The message to log.
+ * @param {string} section - The section name.
+ * @param {string} [color] - The color of the message.
  */
 function log(message, section, color) {
   if (!color) {
@@ -70,8 +118,11 @@ function log(message, section, color) {
   console.log("%cHexforged <" + section + "> " + message, color);
 }
 
-/*
- * AJAX
+/**
+ * Sends an AJAX request to get data from the server.
+ *
+ * @param {string} url - The URL to send the request to.
+ * @param {string} keyword - The command to send with the request.
  */
 function getData(url, keyword) {
   let req = $.ajax({
@@ -104,6 +155,56 @@ function getData(url, keyword) {
   });
 }
 
+/**
+ * Sends form data to a specified URL via an AJAX POST request.
+ * Logs the process and handles the response.
+ *
+ * @param {string} url - The URL endpoint to which the form data should be sent (without the .php extension).
+ * @param {Object} form - The jQuery form object to be serialized and sent.
+ */
+function getFormData(url, form) {
+  let id = form.attr("id");
+  let data = form.serialize();
+  let addData = { form: id };
+  data += "&" + $.param(addData);
+  let req = $.ajax({
+    url: "/" + url + ".php",
+    type: "POST",
+    data: data,
+    beforeSend: function (xhr) {
+      log("Submitting: <form#" + id + "/>", "DATA");
+    },
+  });
+  req.fail(function (xhr, textStatus, errorThrown) {
+    if (!errorThrown) {
+      log("Unknown", "ERROR");
+    } else {
+      log(textStatus + " - " + errorThrown, "ERROR", "darkred");
+    }
+  });
+  req.done(function (data, textStatus, xhr) {
+    if (data.length > 0) {
+      log(
+        "Response Received: <form#" + id + "/> (" + data.length + ")",
+        "DATA"
+      );
+      processFormData(id, data);
+    } else {
+      log(
+        "Empty/Null response received from <form#" + id + "/>.",
+        "WARNING",
+        "#9aa0a6"
+      );
+    }
+  });
+}
+
+/**
+ * Processes the received data based on the keyword.
+ *
+ * @param {string} keyword - The command associated with the data.
+ * @param {string} data - The received data.
+ */
 function processData(keyword, data) {
   setTimeout(function () {
     log("Processing: " + keyword + " (" + data.length + ")", "DATA", "green");
@@ -135,8 +236,126 @@ function processData(keyword, data) {
   }, DELAY);
 }
 
-/*
- * Live Game Clock
+function processFormData(id, data) {
+  log("Processing: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+  let response = grecaptcha.getResponse();
+  if (response.length === 0) {
+    $("#recaptcha").after(
+      '<span class="hex-form__fail hex-color__red">Complete the recaptcha challenge.</span>'
+    );
+  }
+  //$("main").append(data);
+  let sections = data.split("=");
+  if (sections[0] === "fail") {
+    if (sections[1].length > 0) {
+      let fail = sections[1].split(":");
+      fail_loop: for (let i = 0; i < fail.length; i++) {
+        switch (fail[i]) {
+          case "account-add":
+            $("form > .hex-margin__top-one:nth-child(1)").after(
+              '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
+            );
+            break fail_loop;
+          case "email-check":
+            $("form > .hex-margin__top-one:nth-child(1)").after(
+              '<span class="hex-form__fail hex-color__red">Email address already in use!</span>'
+            );
+            break fail_loop;
+          case "username-check":
+            $("form > .hex-margin__top-one:nth-child(1)").after(
+              '<span class="hex-form__fail hex-color__red">Account name already in use!</span>'
+            );
+            break fail_loop;
+          case "empty-username":
+            $("#hex-input__username")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Account name is required.</span>'
+              );
+            break;
+          case "empty-email":
+            $("#hex-input__email")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
+              );
+            break;
+          case "empty-passwd":
+            $("#hex-input__passwd")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+              );
+            break;
+          case "empty-passwdConfirm":
+            $("#hex-input__passwdConfirm")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+              );
+            break;
+          case "username-validate":
+            $("#hex-input__username")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Name can only contain letters and whitespace.</span>'
+              );
+            break;
+          case "email-validate":
+            $("#hex-input__email")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
+              );
+            break;
+          case "passwd-validate":
+            $("#hex-input__passwd")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Password must be 8-32 characters and contain one uppercase, lowercase, number and special character.</span>'
+              );
+            break;
+          case "passwd-match":
+            $("#hex-input__passwdConfirm")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">Passwords do not match.</span>'
+              );
+            break;
+          case "accept-terms":
+            $("#hex-checkbox__acceptTerms")
+              .parent()
+              .after(
+                '<span class="hex-form__fail hex-color__red">You must accept the Terms of Service.</span>'
+              );
+          default:
+            break;
+        }
+      }
+      $("#submit > span").html(lastSubmit);
+      log(
+        "Failed: <form#" + id + "/> (" + data.length + ")",
+        "ERROR",
+        "darkred"
+      );
+    }
+  } else if (sections[0] === "success") {
+    $("form > .hex-margin__top-one:nth-child(1)").after(
+      '<span class="hex-form__success hex-color__green">Activation email has been sent!</span>'
+    );
+    $("#recaptcha").html("");
+    log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+  } else {
+    $("form > .hex-margin__top-one:nth-child(1)").after(
+      '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
+    );
+    $("#submit > span").html(lastSubmit);
+    log("Failed: <form#" + id + "/> (" + data.length + ")", "ERROR", "darkred");
+  }
+}
+
+/**
+ * Updates the game time based on the real time.
  */
 function getGameTime() {
   let now = new Date();
@@ -168,10 +387,9 @@ function getGameTime() {
   }
 }
 
-/*
- * DOM Ready: $(document).ready
+/**
+ * Initializes the document ready functions.
  */
-
 $(function () {
   let manager = "hexforged";
   if (
@@ -197,8 +415,16 @@ $(function () {
   }
   getData(manager, "footer");
 
+  $(document).on("submit", "form", function (event) {
+    event.preventDefault();
+    lastSubmit = $("#submit > span").html();
+    $("#submit > span").html('<div class="loader"></div>');
+    $(".hex-form__fail").remove();
+    getFormData(manager, $(this));
+  });
+
   $(document).on("input", "input.hex-input__input", function (event) {
-    // log("Input Value: {" + this.value + "}.", "WARNING", "#9aa0a6");
+    // log('Input Value: {' + this.value + '}.', 'WARNING', '#9aa0a6');
     if (this.value) {
       $(this).addClass("hex-input--has-value");
     } else {

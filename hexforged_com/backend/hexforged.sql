@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.1 2024/07/13 15:03:53 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.2 2024/07/17 13:47:46 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -126,7 +126,7 @@ CREATE TABLE `users` (
         `activated` bit(1) NOT NULL DEFAULT 0 COMMENT 'Activation User Bit',
         `disabled` bit(1) NOT NULL DEFAULT 0 COMMENT 'Disabled User Bit',
         PRIMARY KEY (`id`),
-        UNIQUE KEY `login` (`login`),
+        UNIQUE KEY `username` (`username`),
         UNIQUE KEY `email` (`email`),
         KEY `gid` (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;

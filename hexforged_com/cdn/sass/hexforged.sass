@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.3 2024/07/13 23:52:29 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.0.4 2024/07/16 04:34:38 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,6 +27,7 @@
  */
 
 $bg: rgb(19, 20, 23)
+$bg-footer: rgb(9, 10, 11)
 $bg-panel: rgba(0, 0, 0, 0.5)
 $bg-panel-shadow: rgba(0, 0, 0, 0.65)
 $color: rgb(150, 150, 150)
@@ -105,12 +106,11 @@ $screen-xlarge: 1200px
 html, body, header, main, footer
   width: 100%
 
-body
+html, body
+  height: 100%
   position: fixed
   top: 0
   bottom: 0
-  left: 0
-  height: 100%
 
 body
   background: $bg
@@ -173,6 +173,7 @@ header
   position: fixed
   top: 0
   height: 128px
+  z-index: 1
 
   #logo
     position: absolute
@@ -189,6 +190,8 @@ header
 
   &#header-large
     height: 384px
+    @include screen-max($screen-medium)
+      height: 300px
 
     #logo
       position: absolute
@@ -212,23 +215,28 @@ header
  * Main
  */
 main
-  position: absolute
-  left: 0
-  height: 100%
+  overflow-y: auto
+  padding-bottom: 2rem
   width: 100%
   text-align: center
+  z-index: 2
   @include screen-max($screen-medium)
-    top: calc(135px + 175px)
+    margin-top: calc(135px + 175px)
+    height: calc(100% - 4rem - 135px - 175px)
   @include screen-minmax($screen-medium, $screen-xlarge)
-    top: calc(135px + 250px)
+    margin-top: calc(135px + 250px)
+    height: calc(100% - 4rem - 135px - 250px)
   @include screen-min($screen-xlarge)
-    top: calc(135px + 350px)
+    margin-top: calc(135px + 350px)
+    height: calc(100% - 4rem - 135px - 350px)
 
   &#dashboard
-    top: 128px
+    margin-top: 128px
+    height: calc(100% - 4rem - 128px)
   
   &#login, &#register
-    top: 180px
+    margin-top: 180px
+    height: calc(100% - 4rem - 180px)
 
     form
       background-color: $bg-panel
@@ -246,6 +254,7 @@ main
         cursor: pointer
         display: inline-flex
         text-align: left
+        position: relative
 
         &:checked
           box-shadow: 0 0 2px 1px $color-gold, 0 0 0 2px $color-border, inset 0 0 1px #28334133, inset 0 1px 1px #2833411a, inset 0 2px 2px #2833411a
@@ -338,6 +347,20 @@ main
             background-position: 25%
             background-size: 330% 100%
 
+      .hex-form__fail, .hex-form__success
+        border-radius: 0.35em
+        display: block
+        margin: 0 1em
+        padding: 0.35em 0
+
+      .hex-form__fail
+        background: rgba(220,47,50,0.1)
+        border: 1px solid rgba(220,47,50,0.25)
+
+      .hex-form__success
+        background: rgba(93,206,51,0.1)
+        border: 1px solid rgba(93,206,51,0.25)
+
   &#not-found, &#restricted, &#server-error
     top: 0
     height: 100%
@@ -421,19 +444,21 @@ main
  * Footer
  */
 footer
-  background: $bg-panel
+  background: $bg-footer
   box-shadow: 0 4px 30px $bg-panel-shadow
   @include font-size(12pt)
   display: flex
   align-items: center
+  height: 4rem
   justify-content: space-between
   justify-items: center
-  position: fixed
+  position: absolute
   bottom: 0
   padding: 1em 0 1em
   width: 100%
   text-align: center
   text-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,1)
+  z-index: 3
   @include screen-max($screen-medium)
     @include font-size(10pt)
 
@@ -589,3 +614,24 @@ footer
 
   div
     margin: 0 auto
+
+/**
+ * Loader
+ */
+.loader
+  width: 22px
+  height: 22px
+  border: 5px solid rgb(195, 225, 248)
+  border-bottom-color: rgb(0, 213, 255)
+  border-radius: 50%
+  display: inline-block
+  box-sizing: border-box
+  position: relative
+  top: 0.3em
+  animation: rotation 1s linear infinite
+
+  @keyframes rotation
+    0%
+      transform: rotate(0deg)
+    100%
+      transform: rotate(360deg)

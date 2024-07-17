@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: hexforged.php,v 1.0.1 2024/07/13 00:40:20 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.2 2024/07/15 19:27:27 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -30,7 +30,9 @@
 
 namespace Hexforged;
 
-require_once("../backend/frontend.php");
+require_once(__DIR__ . '/../../.env');
+require_once(__DIR__ . '/../backend/account.php');
+require_once(__DIR__ . '/../backend/metadata.php');
 
 /**
  * Class Output
@@ -44,15 +46,15 @@ class Output
      *
      * @return string HTML code for <header/>.
      */
-    public static function Header(string $size = ""): string
+    public static function Header(string $size = ''): string
     {
-        $image = "";
-        if ($size == "large") {
-            $image = "logo@512x";
-        } else if ($size == "medium") {
-            $image = "logo@256x";
+        $image = '';
+        if ($size == 'large') {
+            $image = 'logo@512x';
+        } else if ($size == 'medium') {
+            $image = 'logo@256x';
         } else {
-            $image = "logo@128x";
+            $image = 'logo@128x';
         }
         return <<<EOF
         <a href="//hexforged.com"><img alt="" id="logo" src="//cdn.hexforged.com/images/{$image}.png" loading="eager" /></a>
@@ -66,8 +68,8 @@ EOF;
      */
     public static function Footer(): string
     {
-        $gameTime = Frontend::getGameTime();
-        $version = Frontend::getVersion();
+        $gameTime = Metadata::getGameTime();
+        $version = Metadata::getVersion();
         return <<<EOF
         <p><a href="//discord.gg/DSvUNYm"><i class="fa-brands fa-discord"></i></a>
         <a href="//github.com/hexforged"><i class="fa-brands fa-github"></i></a></p>
@@ -97,29 +99,30 @@ EOF;
      */
     public static function Register(): string
     {
+        $googlePublic = GOOGLE_PUBLIC;
         return <<<EOF
         <br/>
-        <form action="/account/create" method="post">
+        <form action="" id="account-create" method="post">
             <div class="hex-margin__top-one">
                 <h4><i class="fa-solid fa-user"></i> Register</h4>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__username" autocomplete="username" name="accountName" type="text" required />
+                <input class="hex-input__input" id="hex-input__username" autocomplete="username" name="username" type="text" />
                 <label class="hex-input__label" for="hex-input__username">Account Name</label>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__email" autocomplete="email" name="email" type="text" required />
+                <input class="hex-input__input" id="hex-input__email" autocomplete="email" name="email" type="text" />
                 <label class="hex-input__label" for="hex-input__email">Email</label>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwd" autocomplete="new-password" name="password" type="password" required />
+                <input class="hex-input__input" id="hex-input__passwd" autocomplete="new-password" name="passwd" type="password" />
                 <label class="hex-input__label" for="hex-input__passwd">Password</label>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwdConfirm" autocomplete="new-password" name="passwordConfirmation" type="password" required />
+                <input class="hex-input__input" id="hex-input__passwdConfirm" autocomplete="new-password" name="passwdConfirm" type="password" />
                 <label class="hex-input__label" for="hex-input__passwdConfirm">Confirm Password</label>
             </div>
-            <div id="recaptcha" class="g-recaptcha" data-sitekey="6LcOJw8qAAAAAM0WpkDNh_zjTi3Q-zkyouqF1Sfg" data-theme="dark"></div>
+            <div id="recaptcha" class="g-recaptcha" data-sitekey="{$googlePublic}" data-theme="dark"></div>
             <div class="hex-checkbox hex-margin__top-one">
                 <input class="hex-checkbox__input" id="hex-checkbox__acceptTerms" name="acceptTerms" value="1" type="checkbox" />
                 <label class="hex-checkbox__label" for="hex-checkbox__acceptTerms">I accept the <a href="/legal">Terms of Use and Privacy Notice</a>.</label>
@@ -143,7 +146,7 @@ EOF;
     {
         return <<<EOF
         <br/>
-        <form action="/account/login" method="post">
+        <form action="" id="account-login" method="post">
             <div class="hex-margin__top-one">
                 <h4><i class="fa-solid fa-key"></i> Login</h4>
             </div>
@@ -195,6 +198,18 @@ if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
             break;
         case 'dashboard':
             //echo Output::Dashboard();
+            break;
+        default:
+            break;
+    }
+} else if (isset($_POST['form']) && trim($_POST['form']) != '') {
+    $form = strtolower(trim($_POST['form']));
+    switch ($form) {
+        case 'account-create':
+            echo Account::Create($sql, $_POST);
+            break;
+        case 'account-login':
+            echo Account::Login($sql, $_POST);
             break;
         default:
             break;

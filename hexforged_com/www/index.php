@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: index.php,v 1.0.0 2024/07/08 19:25:03 -0700 kyau Exp $
+ * $KYAULabs: index.php,v 1.0.1 2024/07/17 00:53:49 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,13 +29,12 @@
  */
 
 $rus = getrusage();
-require_once("../../aurora/aurora.inc.php");
-require_once("../backend/frontend.php");
+require_once(__DIR__ . '/../../aurora/aurora.inc.php');
 
-$hexforged = new KYAULabs\Aurora("index.html", "/nginx/https/hexforged_com/www", "hexforged.com", true, true);
-$hexforged->title = Hexforged\Frontend::getTitle();
-$hexforged->description = "A multiplayer RPG prototype developed by KYAU Labs.";
-$hexforged->api = ["cdn.hexforged.com"];
+$hexforged = new KYAULabs\Aurora('index.html', '/nginx/https/hexforged_com/www', 'hexforged.com', true, true);
+$hexforged->title = 'Hexforged: Realms Unleashed';
+$hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
+$hexforged->api = ['cdn.hexforged.com'];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
     '/javascript/jquery-3.7.1.min.js' => 'script',
