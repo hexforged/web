@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.1 2024/07/17 04:30:51 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.2 2024/07/19 04:07:25 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -186,72 +186,59 @@ class Account
         body {
             background-color: rgb(19, 20, 23);
             color: rgb(150, 150, 150);
-            font-size: 12pt;
-            margin: 2em 4em;
-        }
-        img {
-            display: block;
+            width: 100%;
         }
         a ,a:link, a:active, a:visited {
-            color: rgb(222, 222, 222);
+            color: rgb(195, 225, 248);
             text-decoration: none;
         }
         a:hover {
-            text-decoration: underline;
+            color: rgb(255, 255, 255);
         }
-        button {
-            background: transparent;
-            border: none;
-            padding: 1px;
-            display: inline-block;
-            cursor: pointer;
-            text-decoration: none;
-            color: rgb(195, 225, 248);
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
-        }
-        button:hover {
-            color: rgb(255, 255, 255)
-        }
-        button > span {
+        td { border-radius: 8px; }
+        td a {
             background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%);
             background-position: 50%;
             background-size: 330% 100%;
-            border-radius: 0.25em;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
             font-size: 12pt;
             line-height: 2.0;
-            padding: 0.5em 2em;
+            padding: 4px 16px;
             text-decoration: none;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
         }
-        button > span:hover {
-            background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%);
-            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+        td a:hover {
             background-position: 25%;
             background-size: 330% 100%;
         }
-        hex-font__small {
-            font-size: 10pt;
+        td.button {
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);    
+        }
+        td.button:hover {
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
         }
     </style>
-    <script type="text/javascript">
-        const button = document.querySelector("button");
-        button.addEventListener("click", (event) => {
-            location.href = "https://hexforged.com/verify/{$token}";
-        });
-    </script>
 </head>
 
-<body>
+<body style="font-size:12pt;">
 
-<img src="data:image/png;base64,{$image}" />
-<br/>
-<h4>Hello, {$data['username']}!</h4>
-<br/>
-<div>Welcome to Hexforged!<br/>One last step before you can login, please verify your email address.</div>
-<br/>
-<button type="submit" name="verify" id="verify"><span>Confirm your email</span></button>
-<br/>
-<div class="hex-font__small">If you have received this message by mistake, ignore this email. If you think someone else if using your account without your consent, please <a href="mailto:support@hexforged.com">contact us</a>.</div>
+<div>&nbsp;</div>
+<div style="margin:16px 16px;text-align:center"><img src="data:image/png;base64,{$image}" /></div>
+<h3 style="margin:8px 16px;">Hello, <span style="color:rgb(37,143,143)">{$data['username']}</span>!</h3>
+<div style="margin:8px 16px;">Welcome to Hexforged!<br/>One last step before you can login, please verify your email address.</div>
+<table width="200px" cellspacing="0" cellpadding="0" style="margin:32px 16px;">
+  <tr><td>
+    <table cellspacing="0" cellpadding="0">
+      <tr><td class="button" bgcolor="#4f8a8b">
+        <a href="https://hexforged.com/verify/{$token}">Confirm your email</a>
+      </td></tr>
+    </table>
+  </tr></td>
+</table>
+<div style="margin:8px 16px;font-size:10pt">If you have received this message by mistake, ignore this email. If you think someone else if using your account without your consent, please <a href="mailto:support@hexforged.com">contact us</a>.<br/>&nbsp;</div>
 
 </body>
 </html>
@@ -260,7 +247,7 @@ EOF;
                 $mail->send();
 
                 // insert code to create user in database
-                return 'success=' . $token . '=' . $hash;
+                //return 'success=' . $token . '=' . $hash;
             }
         } else {
             $fail = true;
@@ -300,8 +287,31 @@ EOF;
      * 
      * @return string A generated success/fail string.
      */
-    public static function Verify(SQLHandler $sql): string
+    public static function Verify(SQLHandler $sql, string $token): string
     {
-        return '';
+        $fail = false;
+        $list = [];
+
+        // check if activation token is valid
+        if ($sql->query('SELECT Count(*) AS `total` FROM `activation` WHERE `token` = UUID_TO_BIN(:token)', [':token' => $token])->fetchObject()->total < 1) {
+            $fail = true;
+            $list[] = 'token-check';
+        }
+
+        // pull user data based on activation token
+        $user = $sql->query('SELECT u.* FROM `users` u JOIN `activation` a ON u.id = a.uid WHERE a.token = UUID_TO_BIN(:token)', [':token' => $token])->fetchObject();
+
+        // check if account is already activated
+        if ($user->activated === 1) {
+            $fail = true;
+            $list[] = 'activated-check';
+        }
+
+        if (!in_array('token-check', $list) && !in_array('activated-check', $list)) {
+            $sql->query("UPDATE `users` SET `activated` = b'1' WHERE `id` = :id", [':id' => $user->id]);
+            $list[] = $user->username;
+        }
+
+        return self::GenerateString($fail, $list);
     }
 }

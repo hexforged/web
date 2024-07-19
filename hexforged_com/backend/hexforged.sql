@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.2 2024/07/17 13:47:46 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.3 2024/07/18 00:43:42 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -75,7 +75,8 @@ CREATE TABLE `activation` (
         `token` binary(16) NOT NULL COMMENT 'Activation Token',
         -- UUID_TO_BIN(), BIN_TO_UUID()
         PRIMARY KEY (`id`),
-        UNIQUE KEY `uid` (`uid`)
+        UNIQUE KEY `uid` (`uid`),
+        UNIQUE KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
@@ -162,5 +163,7 @@ CREATE TABLE `version` (
 --
 
 LOCK TABLES `version` WRITE;
-INSERT INTO `version` VALUES (1,0,1,0,'dreams',NOW());
+INSERT INTO `version` VALUES (1,0,1,0,'dreams','2024-07-11 10:23:00');
+INSERT INTO `version` VALUES (2,0,1,1,null,'2024-07-16 01:52:00');
+INSERT INTO `version` VALUES (3,0,1,2,null,'2024-07-17 21:28:00');
 UNLOCK TABLES;

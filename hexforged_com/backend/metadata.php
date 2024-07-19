@@ -97,8 +97,11 @@ class Metadata
     {
         global $sql;
         // return version and hex string that updates daily
-        $data = $sql->query('SELECT * FROM `version` ORDER BY `datetime` DESC');
+        $data = $sql->query('SELECT * FROM `version` ORDER BY `datetime` DESC LIMIT 1');
         $version = $data->fetchObject();
-        return "{$version->major}.{$version->minor}.{$version->patch}<span>-{$version->codename}</span>";
+        unset($data);
+        $data = $sql->query('SELECT * FROM `version` WHERE `codename` IS NOT NULL ORDER BY `datetime` DESC LIMIT 1');
+        $codename = $data->fetchObject()->codename;
+        return "{$version->major}.{$version->minor}.{$version->patch}<span>-{$codename}</span>";
     }
 }

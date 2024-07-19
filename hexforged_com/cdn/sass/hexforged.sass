@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.4 2024/07/16 04:34:38 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.0.5 2024/07/19 04:08:22 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -234,7 +234,7 @@ main
     margin-top: 128px
     height: calc(100% - 4rem - 128px)
   
-  &#login, &#register
+  &#login, &#register, &#verify
     margin-top: 180px
     height: calc(100% - 4rem - 180px)
 
@@ -317,36 +317,6 @@ main
         .hex-input__input:focus+.hex-input__label:not(.hex-input--labelless)
           transform: translateY(calc(-50% - 0.4em)) scale(.8)
 
-      .hex-btn__submit
-        background: transparent
-        border: none
-        padding: 1px
-        display: inline-block
-        cursor: pointer
-        text-decoration: none
-        color: rgb(195, 225, 248)
-        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3)
-
-        &:hover
-          color: rgb(255, 255, 255)
-
-        span
-          background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
-          background-position: 50%
-          background-size: 330% 100%
-          border-radius: 0.25em
-          box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2)
-          font-family: $fontstack
-          font-size: 12pt
-          line-height: 2.0
-          padding: 0.5em 2em
-
-          &:hover
-            background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
-            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5)
-            background-position: 25%
-            background-size: 330% 100%
-
       .hex-form__fail, .hex-form__success
         border-radius: 0.35em
         display: block
@@ -364,6 +334,7 @@ main
   &#not-found, &#restricted, &#server-error
     top: 0
     height: 100%
+    margin-top: 0
     display: flex
     align-items: center
     justify-content: center
@@ -507,6 +478,39 @@ footer
 
 .hex-align__right
   text-align: right
+
+/**
+ * Buttons
+ */
+.hex-btn__submit
+  background: transparent
+  border: none
+  padding: 1px
+  display: inline-block
+  cursor: pointer
+  text-decoration: none
+  color: rgb(195, 225, 248)
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3)
+
+  &:hover
+    color: rgb(255, 255, 255)
+
+  span
+    background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
+    background-position: 50%
+    background-size: 330% 100%
+    border-radius: 0.25em
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2)
+    font-family: $fontstack
+    font-size: 12pt
+    line-height: 2.0
+    padding: 0.5em 2em
+
+    &:hover
+      background: linear-gradient(to right, rgb(102, 178, 178) 5%, rgb(0, 102, 101) 60%)
+      box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5)
+      background-position: 25%
+      background-size: 330% 100%
 
 
 /**

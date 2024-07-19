@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: hexforged.php,v 1.0.2 2024/07/15 19:27:27 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.3 2024/07/19 04:08:43 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -170,6 +170,20 @@ EOF;
             </div>
 EOF;
     }
+
+    public static function Verify(): string
+    {
+        return <<<EOF
+        <form action="" id="account-verify" method="post">
+            <div class="hex-margin__top-one">
+                <h4><i class="fa-solid fa-user-check"></i> Activation</h4>
+            </div>
+            <input type="hidden" name="token" value="" />
+            <div class="hex-margin__top-one"><span class="token"></span></div>
+            <div class="hex-align__center hex-margin__top-one"><span class="loader"></span></div>
+        </form>
+EOF;
+    }
 }
 
 if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
@@ -196,6 +210,9 @@ if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
         case 'login':
             echo Output::Login();
             break;
+        case 'verify':
+            echo Output::Verify();
+            break;
         case 'dashboard':
             //echo Output::Dashboard();
             break;
@@ -210,6 +227,9 @@ if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
             break;
         case 'account-login':
             echo Account::Login($sql, $_POST);
+            break;
+        case 'account-verify':
+            echo Account::Verify($sql, $_POST['token']);
             break;
         default:
             break;

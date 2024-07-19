@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.3 2024/07/16 03:23:01 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.4 2024/07/19 04:07:52 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -30,7 +30,7 @@
  * Delay constant in milliseconds.
  * @constant {number}
  */
-const DELAY = 250;
+const DELAY = 50;
 
 /**
  * Array of game day names.
@@ -224,13 +224,20 @@ function processData(keyword, data) {
       setInterval(() => getGameTime(), 250);
     } else if (keyword.substr(0, 6) === "header") {
       $("header").html(data);
+    } else if (keyword === "verify") {
+      $("#" + keyword).html(data);
+      $("#account-verify > input[type=hidden]").val($("#verify").data("token"));
+      $("#account-verify > div > span.token").html($("#verify").data("token"));
+      setTimeout(() => $("#account-verify").submit(), 500);
     } else {
       $("#" + keyword).html(data);
       // render recaptcha if found
       if ($("#recaptcha").length) {
-        recaptcha = grecaptcha.render("recaptcha", {
-          sitekey: $("#recaptcha").data("sitekey"),
-        });
+        if (typeof grecaptcha !== "undefined") {
+          recaptcha = grecaptcha.render("recaptcha", {
+            sitekey: $("#recaptcha").data("sitekey"),
+          });
+        }
       }
     }
   }, DELAY);
@@ -238,100 +245,126 @@ function processData(keyword, data) {
 
 function processFormData(id, data) {
   log("Processing: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
-  let response = grecaptcha.getResponse();
-  if (response.length === 0) {
-    $("#recaptcha").after(
-      '<span class="hex-form__fail hex-color__red">Complete the recaptcha challenge.</span>'
-    );
+  if ($("#recaptcha").length) {
+    let response = grecaptcha.getResponse();
+    if (response.length === 0) {
+      $("#recaptcha").after(
+        '<span class="hex-form__fail hex-color__red">Complete the recaptcha challenge.</span>'
+      );
+    }
   }
   //$("main").append(data);
   let sections = data.split("=");
-  if (sections[0] === "fail") {
-    if (sections[1].length > 0) {
-      let fail = sections[1].split(":");
-      fail_loop: for (let i = 0; i < fail.length; i++) {
-        switch (fail[i]) {
-          case "account-add":
-            $("form > .hex-margin__top-one:nth-child(1)").after(
-              '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
-            );
-            break fail_loop;
-          case "email-check":
-            $("form > .hex-margin__top-one:nth-child(1)").after(
-              '<span class="hex-form__fail hex-color__red">Email address already in use!</span>'
-            );
-            break fail_loop;
-          case "username-check":
-            $("form > .hex-margin__top-one:nth-child(1)").after(
-              '<span class="hex-form__fail hex-color__red">Account name already in use!</span>'
-            );
-            break fail_loop;
-          case "empty-username":
-            $("#hex-input__username")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Account name is required.</span>'
+  if (id === "account-create") {
+    if (sections[0] === "fail") {
+      // account-create: fail
+      if (sections[1].length > 0) {
+        let fail = sections[1].split(":");
+        fail_loop: for (let i = 0; i < fail.length; i++) {
+          switch (fail[i]) {
+            case "account-add":
+              $("form > .hex-margin__top-one:nth-child(1)").after(
+                '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
               );
-            break;
-          case "empty-email":
-            $("#hex-input__email")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
+              break fail_loop;
+            case "email-check":
+              $("form > .hex-margin__top-one:nth-child(1)").after(
+                '<span class="hex-form__fail hex-color__red">Email address already in use!</span>'
               );
-            break;
-          case "empty-passwd":
-            $("#hex-input__passwd")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+              break fail_loop;
+            case "username-check":
+              $("form > .hex-margin__top-one:nth-child(1)").after(
+                '<span class="hex-form__fail hex-color__red">Account name already in use!</span>'
               );
-            break;
-          case "empty-passwdConfirm":
-            $("#hex-input__passwdConfirm")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Password is required.</span>'
-              );
-            break;
-          case "username-validate":
-            $("#hex-input__username")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Name can only contain letters and whitespace.</span>'
-              );
-            break;
-          case "email-validate":
-            $("#hex-input__email")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
-              );
-            break;
-          case "passwd-validate":
-            $("#hex-input__passwd")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Password must be 8-32 characters and contain one uppercase, lowercase, number and special character.</span>'
-              );
-            break;
-          case "passwd-match":
-            $("#hex-input__passwdConfirm")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">Passwords do not match.</span>'
-              );
-            break;
-          case "accept-terms":
-            $("#hex-checkbox__acceptTerms")
-              .parent()
-              .after(
-                '<span class="hex-form__fail hex-color__red">You must accept the Terms of Service.</span>'
-              );
-          default:
-            break;
+              break fail_loop;
+            case "empty-username":
+              $("#hex-input__username")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Account name is required.</span>'
+                );
+              break;
+            case "empty-email":
+              $("#hex-input__email")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
+                );
+              break;
+            case "empty-passwd":
+              $("#hex-input__passwd")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+                );
+              break;
+            case "empty-passwdConfirm":
+              $("#hex-input__passwdConfirm")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+                );
+              break;
+            case "username-validate":
+              $("#hex-input__username")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Name can only contain letters and whitespace.</span>'
+                );
+              break;
+            case "email-validate":
+              $("#hex-input__email")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
+                );
+              break;
+            case "passwd-validate":
+              $("#hex-input__passwd")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Password must be 8-32 characters and contain one uppercase, lowercase, number and special character.</span>'
+                );
+              break;
+            case "passwd-match":
+              $("#hex-input__passwdConfirm")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Passwords do not match.</span>'
+                );
+              break;
+            case "accept-terms":
+              $("#hex-checkbox__acceptTerms")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">You must accept the Terms of Service.</span>'
+                );
+            default:
+              break;
+          }
         }
+        $("#submit > span").html(lastSubmit);
+        log(
+          "Failed: <form#" + id + "/> (" + data.length + ")",
+          "ERROR",
+          "darkred"
+        );
       }
+    } else if (sections[0] === "success") {
+      // account-create: success
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__success hex-color__green">Activation email has been sent!</span>'
+      );
+      $("#recaptcha").html("");
+      $("#submit > span").html(
+        '<i class="fa-solid fa-check hex-color__green"></i>'
+      );
+      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+    } else {
+      // account-create: fail
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
+      );
       $("#submit > span").html(lastSubmit);
       log(
         "Failed: <form#" + id + "/> (" + data.length + ")",
@@ -339,17 +372,60 @@ function processFormData(id, data) {
         "darkred"
       );
     }
-  } else if (sections[0] === "success") {
-    $("form > .hex-margin__top-one:nth-child(1)").after(
-      '<span class="hex-form__success hex-color__green">Activation email has been sent!</span>'
-    );
-    $("#recaptcha").html("");
-    log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+  } else if (id === "account-verify") {
+    //$("main").append(data);
+    if (sections[0] === "fail") {
+      // account-verify: fail
+      if (sections[1].length > 0) {
+        let fail = sections[1].split(":");
+        fail_loop: for (let i = 0; i < fail.length; i++) {
+          switch (fail[i]) {
+            case "activated-check":
+              $("form > .hex-margin__top-one:nth-child(1)").after(
+                '<span class="hex-form__fail hex-color__red">Account is already active!</span>'
+              );
+              break fail_loop;
+            case "token-check":
+              $("form > .hex-margin__top-one:nth-child(1)").after(
+                '<span class="hex-form__fail hex-color__red">Token is invalid!</span>'
+              );
+              break fail_loop;
+            default:
+              break;
+          }
+        }
+        $("#account-verify > div > span.loader").remove();
+        log(
+          "Failed: <form#" + id + "/> (" + data.length + ")",
+          "ERROR",
+          "darkred"
+        );
+      }
+    } else if (sections[0] === "success") {
+      // account-verify: success
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__success hex-color__green">Account \'' +
+          sections[1] +
+          "' has been activated!</span>"
+      );
+      icon = $("#account-verify > div > span.loader").parent();
+      $("#account-verify").attr("id", "redirect");
+      $(icon).html(
+        '<button type="submit" name="submit" id="submit" class="hex-btn__submit hex-margin__top-one" data-url="/login"><span>Sign in</span></button>'
+      );
+      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+    } else {
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__fail hex-color__red">Token is invalid!</span>'
+      );
+      $("#account-verify > div > span.loader").remove();
+      log(
+        "Failed: <form#" + id + "/> (" + data.length + ")",
+        "ERROR",
+        "darkred"
+      );
+    }
   } else {
-    $("form > .hex-margin__top-one:nth-child(1)").after(
-      '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
-    );
-    $("#submit > span").html(lastSubmit);
     log("Failed: <form#" + id + "/> (" + data.length + ")", "ERROR", "darkred");
   }
 }
@@ -400,6 +476,7 @@ $(function () {
     if (
       $("main").is("#register") ||
       $("main").is("#login") ||
+      $("main").is("#verify") ||
       $("main").is("#dashboard")
     ) {
       if ($("main").is("#dashboard")) {
@@ -415,16 +492,22 @@ $(function () {
   }
   getData(manager, "footer");
 
+  // form submission
   $(document).on("submit", "form", function (event) {
     event.preventDefault();
     lastSubmit = $("#submit > span").html();
     $("#submit > span").html('<div class="loader"></div>');
     $(".hex-form__fail").remove();
-    getFormData(manager, $(this));
+    if ($("form").attr("id") === "redirect") {
+      location.href =
+        "https://" + document.location.hostname + $("#submit").data("url");
+    } else {
+      getFormData(manager, $(this));
+    }
   });
 
+  // responsive input labels
   $(document).on("input", "input.hex-input__input", function (event) {
-    // log('Input Value: {' + this.value + '}.', 'WARNING', '#9aa0a6');
     if (this.value) {
       $(this).addClass("hex-input--has-value");
     } else {
@@ -434,6 +517,8 @@ $(function () {
   $(document).on("click", "label.hex-input__label", function (event) {
     $(this).prev().focus();
   });
+
+  // checkbox custom check using font awesome
   $(document).on("click", "input.hex-checkbox__input", function (event) {
     if ($(".hex-checkbox__override-icon").length) {
       $(".hex-checkbox__override-icon").remove();
