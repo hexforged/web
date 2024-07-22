@@ -1,4 +1,4 @@
-﻿<div align="center"><img src=".github/media/logo@256x.png" alt="Repository Logo" />
+﻿<div align="center"><img src="hexforged_com/cdn/images/logo@256x.png" alt="Repository Logo" />
 
 [https://hexforged.com/](https://hexforged.com/)
 

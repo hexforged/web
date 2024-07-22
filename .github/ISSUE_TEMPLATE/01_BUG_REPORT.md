@@ -10,14 +10,13 @@ assignees: ''
 ## Bug Report
 
 ### Environment
-| Hardware        | Model                      |
-| ----------------| -------------------------- |
-| Platform        | *Desktop, Laptop, or Tablet* |
-| CPU             |                            |
-| GPU             |                            |
-| HDD             | *Disk, SSD, or NVME*       |
-| Windows Version | *Pro N*                    |
-| Windows Build   | *22621.169*                |
+
+| Specification    | User-Configuration         |
+| ---------------- | -------------------------- |
+| Operating System | *Linux, Mac, Windows*      |
+| Platform         | *Server, VPS, Local*       |
+| PHP Version      | *8.3.x*                    |
+| Server Software  | *Nginx, Apache, etc.*      |
 
 ### What is the expected behavior?
 

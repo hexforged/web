@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.0 2024/07/11 03:15:08 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.3 2024/07/18 00:43:42 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -75,7 +75,8 @@ CREATE TABLE `activation` (
         `token` binary(16) NOT NULL COMMENT 'Activation Token',
         -- UUID_TO_BIN(), BIN_TO_UUID()
         PRIMARY KEY (`id`),
-        UNIQUE KEY `uid` (`uid`)
+        UNIQUE KEY `uid` (`uid`),
+        UNIQUE KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
@@ -112,7 +113,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
         `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'User ID',
         `gid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Group ID',
-        `login` varchar(64) NOT NULL COMMENT 'User Name',
+        `username` varchar(64) NOT NULL COMMENT 'User Name',
         `passwd` varchar(60) NOT NULL COMMENT 'Password Hash (Bcrypt)',
         `email` varchar(100) NOT NULL COMMENT 'Email Address',
         `token` binary(16) DEFAULT NULL COMMENT 'User Login Token',
@@ -126,7 +127,7 @@ CREATE TABLE `users` (
         `activated` bit(1) NOT NULL DEFAULT 0 COMMENT 'Activation User Bit',
         `disabled` bit(1) NOT NULL DEFAULT 0 COMMENT 'Disabled User Bit',
         PRIMARY KEY (`id`),
-        UNIQUE KEY `login` (`login`),
+        UNIQUE KEY `username` (`username`),
         UNIQUE KEY `email` (`email`),
         KEY `gid` (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
@@ -162,5 +163,7 @@ CREATE TABLE `version` (
 --
 
 LOCK TABLES `version` WRITE;
-INSERT INTO `version` VALUES (1,0,1,0,'dreams',NOW());
+INSERT INTO `version` VALUES (1,0,1,0,'dreams','2024-07-11 10:23:00');
+INSERT INTO `version` VALUES (2,0,1,1,null,'2024-07-16 01:52:00');
+INSERT INTO `version` VALUES (3,0,1,2,null,'2024-07-17 21:28:00');
 UNLOCK TABLES;

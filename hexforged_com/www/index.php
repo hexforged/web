@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: index.php,v 1.0.0 2024/07/08 19:25:03 -0700 kyau Exp $
+ * $KYAULabs: index.php,v 1.0.1 2024/07/17 00:53:49 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,13 +29,12 @@
  */
 
 $rus = getrusage();
-require_once("../../aurora/aurora.inc.php");
-require_once("../backend/frontend.php");
+require_once(__DIR__ . '/../../aurora/aurora.inc.php');
 
-$hexforged = new KYAULabs\Aurora("index.html", "/nginx/https/hexforged_com/www", "hexforged.com", true, true);
-$hexforged->title = Hexforged\Frontend::getTitle();
-$hexforged->description = "A multiplayer RPG prototype developed by KYAU Labs.";
-$hexforged->api = ["cdn.hexforged.com"];
+$hexforged = new KYAULabs\Aurora('index.html', '/nginx/https/hexforged_com/www', 'hexforged.com', true, true);
+$hexforged->title = 'Hexforged: Realms Unleashed';
+$hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
+$hexforged->api = ['cdn.hexforged.com'];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
     '/javascript/jquery-3.7.1.min.js' => 'script',
@@ -50,8 +49,7 @@ $hexforged->preload = [
 ];
 $hexforged->css = [
     '../cdn/css/fontawesome.min.css' => '//cdn.hexforged.com/css/fontawesome.min.css',
-    '../cdn/css/brands.min.css' => '//cdn.hexforged.com/css/brands.min.css',
-    '../cdn/css/solid.min.css' => '//cdn.hexforged.com/css/solid.min.css',
+    '../cdn/css/fa-all.min.css' => '//cdn.hexforged.com/css/fa-all.min.css',
     '../cdn/css/hexforged.min.css' => '//cdn.hexforged.com/css/hexforged.min.css',
 ];
 $hexforged->js = [
@@ -60,7 +58,7 @@ $hexforged->js = [
 ];
 $hexforged->htmlHeader();
 // <content>
-echo "\t<header></header>\n\t<main></main>\n\t<footer></footer>\n";
+echo "\t<header id=\"header-large\"></header>\n\t<main></main>\n\t<footer></footer>\n";
 // </content>
 $hexforged->htmlFooter();
 echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);
