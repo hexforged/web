@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: index.php,v 1.0.1 2024/07/17 00:53:49 -0700 kyau Exp $
+ * $KYAULabs: index.php,v 1.0.2 2024/07/22 22:09:51 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,15 +29,16 @@
  */
 
 $rus = getrusage();
+require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../../aurora/aurora.inc.php');
 
-$hexforged = new KYAULabs\Aurora('index.html', '/nginx/https/hexforged_com/www', 'hexforged.com', true, true);
+$hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
 $hexforged->title = 'Hexforged: Realms Unleashed';
 $hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
-$hexforged->api = ['cdn.hexforged.com'];
+$hexforged->dns = [CDN_HOST];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
-    '/javascript/jquery-3.7.1.min.js' => 'script',
+    '/javascript/jquery.min.js' => 'script',
     '/fonts/Agave-Regular.ttf' => 'font',
     '/fonts/Agave-Bold.ttf' => 'font',
     '/fonts/SavaPro-Light.otf' => 'font',
@@ -48,13 +49,13 @@ $hexforged->preload = [
     '/fonts/SavaPro-Black.otf' => 'font',
 ];
 $hexforged->css = [
-    '../cdn/css/fontawesome.min.css' => '//cdn.hexforged.com/css/fontawesome.min.css',
-    '../cdn/css/fa-all.min.css' => '//cdn.hexforged.com/css/fa-all.min.css',
-    '../cdn/css/hexforged.min.css' => '//cdn.hexforged.com/css/hexforged.min.css',
+    '../cdn/css/fontawesome.min.css' => '//' . CDN_HOST . '/css/fontawesome.min.css',
+    '../cdn/css/all.min.css' => '//' . CDN_HOST . '/css/all.min.css',
+    '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
 ];
 $hexforged->js = [
-    '../cdn/javascript/jquery-3.7.1.min.js' => '//cdn.hexforged.com/javascript/jquery-3.7.1.min.js',
-    '../cdn/javascript/hexforged.min.js' => '//cdn.hexforged.com/javascript/hexforged.min.js',
+    '../cdn/javascript/jquery.min.js' => '//' . CDN_HOST . '/javascript/jquery.min.js',
+    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
 ];
 $hexforged->htmlHeader();
 // <content>

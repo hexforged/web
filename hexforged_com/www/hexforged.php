@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: hexforged.php,v 1.0.3 2024/07/19 04:08:43 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.4 2024/07/22 23:10:31 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -57,7 +57,7 @@ class Output
             $image = 'logo@128x';
         }
         return <<<EOF
-        <a href="//hexforged.com"><img alt="" id="logo" src="//cdn.hexforged.com/images/{$image}.png" loading="eager" /></a>
+        <a href="/"><img alt="" id="logo" src="//cdn.hexforged.com/images/{$image}.png" loading="eager" /></a>
 EOF;
     }
 

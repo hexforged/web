@@ -1,0 +1,174 @@
+﻿# $KYAULabs: deploy.yml,v 1.1.0 2024/07/22 01:12:20 -0700 kyau Exp $
+
+name: "🌌 Hexforged CI"
+
+on:
+  push:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy 🚀
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout 💾
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      # create CSS directory
+      - name: Create CSS Directory 🚧
+        run: mkdir -vp hexforged_com/cdn/css
+
+      # https://github.com/marketplace/actions/sass-build
+      - name: Compile Sass 👷
+        uses: gha-utilities/sass-build@v0.6.0
+        with:
+          source: hexforged_com/cdn/sass/hexforged.sass
+          destination: hexforged_com/cdn/css/hexforged.css
+
+      # https://github.com/marketplace/actions/release-downloader
+      - name: Download jQuery Release 💾
+        uses: robinraju/release-downloader@v1.11
+        with:
+          repository: "tdewolff/minify"
+          latest: true
+          fileName: "minify_linux_amd64.tar.gz"
+          out-file-path: "/tmp/downloads"
+          extract: true
+
+      - name: Minify CSS/JS 📦️
+        run: |
+          chmod a+x /tmp/downloads/minify
+          for file in hexforged_com/cdn/css/*.css; do
+            if [ -f "$file" ]; then
+              /tmp/downloads/minify $file -o ${file%.css}.min.css
+              rm $file
+            fi
+          done
+          for file in hexforged_com/cdn/javascript/*.js; do
+            if [ -f "$file" ]; then
+              /tmp/downloads/minify $file -o ${file%.js}.min.js
+              rm $file
+            fi
+          done
+
+      # https://github.com/marketplace/actions/release-downloader
+      - name: Download jQuery Release 💾
+        uses: robinraju/release-downloader@v1.11
+        with:
+          repository: "jquery/jquery"
+          latest: true
+          tarBall: true
+          zipBall: false
+          out-file-path: "/tmp/downloads"
+          extract: true
+
+      # https://github.com/marketplace/actions/release-downloader
+      - name: Download Font Awesome Release 💾
+        uses: robinraju/release-downloader@v1.11
+        with:
+          repository: "FortAwesome/Font-Awesome"
+          latest: true
+          fileName: "fontawesome-free-*-web.zip"
+          out-file-path: "/tmp/downloads"
+          extract: true
+
+      - name: Copy jQuery & FontAwesome 🔗
+        run: |
+          cp /tmp/downloads/fontawesome-free-*-web/css/all.min.css hexforged_com/cdn/css/
+          cp /tmp/downloads/fontawesome-free-*-web/css/fontawesome.min.css hexforged_com/cdn/css/
+          sed -i 's|\.\./webfonts/|\.\./fonts/|g' hexforged_com/cdn/css/all.min.css
+          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.js hexforged_com/cdn/javascript/
+          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.map hexforged_com/cdn/javascript/
+
+      # subresource integrity
+      - name: Subresource Integrity 🔒️
+        id: subresource
+        run: |
+          for file in hexforged_com/cdn/css/*.min.css; do
+            if [ -f "$file" ]; then
+              shasum -b -a 512 ${file} | awk '{ print $1 }' | xxd -r -p | base64 | tr -d '\n' > ${file}.sha512
+            fi
+          done
+          for file in hexforged_com/cdn/javascript/*.min.js; do
+            if [ -f "$file" ]; then
+              shasum -b -a 512 ${file} | awk '{ print $1 }' | xxd -r -p | base64 | tr -d '\n' > ${file}.sha512
+            fi
+          done
+
+      # create dotenv
+      - name: Create DotENV 🔐
+        id: dotenv
+        run: |
+          echo -e "<?php\n" > .env
+          echo -e "define(\"GOOGLE_PUBLIC\", \"${{ secrets.GOOGLE_PUBLIC }}\");" >> .env
+          echo -e "define(\"GOOGLE_SECRET\", \"${{ secrets.GOOGLE_SECRET }}\");" >> .env
+          echo -e "define(\"SQL_USER\", \"${{ secrets.SQL_USER }}\");" >> .env
+          echo -e "define(\"SQL_PASSWD\", \"${{ secrets.SQL_PASSWD }}\");" >> .env
+      - name: Detect Production Environment 🎬
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo -e "define(\"CDN_HOST\", \"cdn.hexforged.com\");" >> .env
+          echo -e "define(\"ENVIRONMENT\", \"production\");" >> .env
+      - name: Detect Development Environment ⚗️
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          echo -e "define(\"CDN_HOST\", \"cdn.dev.hexforged.com\");" >> .env
+          echo -e "define(\"ENVIRONMENT\", \"development\");" >> .env
+
+      # https://github.com/marketplace/actions/rsync-deployments-action
+      - name: Rsync to Production 🚀
+        if: github.ref == 'refs/heads/main'
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr  --exclude=".git" --exclude="aurora/.git"
+          remote_path: ${{ secrets.TARGET }}
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          remote_key_pass: ${{ secrets.SSH_PASSWD }}
+          remote_port: ${{ secrets.SSH_PORT }}
+
+      # https://github.com/marketplace/actions/rsync-deployments-action
+      - name: Rsync to Development 🚀
+        if: github.ref == 'refs/heads/develop'
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr  --exclude=".git" --exclude="aurora/.git"
+          remote_path: ${{ secrets.TARGET }}
+          remote_host: ${{ secrets.SSH_HOST_DEV }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          remote_key_pass: ${{ secrets.SSH_PASSWD }}
+          remote_port: ${{ secrets.SSH_PORT }}
+
+      # https://github.com/marketplace/actions/ssh-remote-commands
+      - name: Confirm Permissions 🔑
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_DEV }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSWD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            find ${{ secrets.TARGET }} -type d -exec chmod 2770 {} \;
+            find ${{ secrets.TARGET }} -type f -exec chmod 660 {} \;
+
+      # https://github.com/marketplace/actions/ssh-remote-commands
+      - name: Reset the Development Database 🗃️
+        if: github.ref == 'refs/heads/develop'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_DEV }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSWD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            mariadb -u ${{ secrets.SQL_USER }} -e 'DROP DATABASE hexforged'
+            mariadb -u ${{ secrets.SQL_USER }} < ${{ secrets.TARGET }}/hexforged_com/backend/hexforged.sql
