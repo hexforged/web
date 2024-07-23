@@ -12,6 +12,7 @@
 *.jpeg
 *.gif
 *.svg
+!.github/media/git-flow.svg
 !hexforged_com/cdn/images/logo@256x.png
 
 # Checksum files

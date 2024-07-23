@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.5 2024/07/19 04:08:22 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.0.6 2024/07/22 23:10:45 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -47,7 +47,7 @@ $screen-xlarge: 1200px
  * Mixins
  */
 @mixin font-face($font-name, $file, $ext: 'ttf', $weight: 400, $style: normal)
-  $filepath: '//cdn.hexforged.com/fonts/' + $file
+  $filepath: '../fonts/' + $file
 
   @font-face
     font-family: '#{$font-name}'
@@ -198,15 +198,15 @@ header
       top: 35%
       left: 50%
       @include screen-max($screen-medium)
-        content: url('//cdn.hexforged.com/images/logo@256x.png')
+        content: url('../images/logo@256x.png')
         margin-left: -128px
         width: 256px
       @include screen-minmax($screen-medium, $screen-xlarge)
-        content: url('//cdn.hexforged.com/images/logo@384x.png')
+        content: url('../images/logo@384x.png')
         margin-left: -192px
         width: 384px
       @include screen-min($screen-xlarge)
-        content: url('//cdn.hexforged.com/images/logo@512x.png')
+        content: url('../images/logo@512x.png')
         margin-left: -256px
         width: 512px
 
@@ -342,45 +342,45 @@ main
   &#not-found
     a
       @include screen-max($screen-medium)
-        background-image: url('//cdn.hexforged.com/images/404-flat-dark@256x.png')
+        background-image: url('../images/404-flat-dark@256x.png')
         height: 182px
         width: 256px
       @include screen-minmax($screen-medium, $screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/404-flat-dark@384x.png')
+        background-image: url('../images/404-flat-dark@384x.png')
         height: 273px
         width: 384px
       @include screen-min($screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/404-flat-dark@512x.png')
+        background-image: url('../images/404-flat-dark@512x.png')
         height: 364px
         width: 512px
 
   &#restricted
     a
       @include screen-max($screen-medium)
-        background-image: url('//cdn.hexforged.com/images/403-flat-dark@256x.png')
+        background-image: url('../images/403-flat-dark@256x.png')
         height: 199px
         width: 256px
       @include screen-minmax($screen-medium, $screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/403-flat-dark@384x.png')
+        background-image: url('../images/403-flat-dark@384x.png')
         height: 299px
         width: 384px
       @include screen-min($screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/403-flat-dark@512x.png')
+        background-image: url('../images/403-flat-dark@512x.png')
         height: 398px
         width: 512px
 
   &#server-error
     a
       @include screen-max($screen-medium)
-        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@256x.png')
+        background-image: url('../images/50x-flat-dark@256x.png')
         height: 184px
         width: 256px
       @include screen-minmax($screen-medium, $screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@384x.png')
+        background-image: url('../images/50x-flat-dark@384x.png')
         height: 276px
         width: 384px
       @include screen-min($screen-xlarge)
-        background-image: url('//cdn.hexforged.com/images/50x-flat-dark@512x.png')
+        background-image: url('../images/50x-flat-dark@512x.png')
         height: 368px
         width: 512px
 
