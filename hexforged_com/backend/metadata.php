@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: metadata.php,v 1.0.3 2024/07/17 01:03:33 -0700 kyau Exp $
+ * $KYAULabs: metadata.php,v 1.0.4 2024/07/25 12:38:47 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,6 +29,7 @@
 
 namespace Hexforged;
 
+include_once(__DIR__ . '/../.env');
 include_once(__DIR__ . '/../../aurora/sql.inc.php');
 $sql ??= new \KYAULabs\SQLHandler('hexforged');
 
@@ -84,7 +85,7 @@ class Metadata
         $data = $sql->query('SELECT UNIX_TIMESTAMP(`open`) AS `worldStart` FROM `leagues` WHERE `live` = 1')->fetchObject();
         $worldStart = intval($data->worldStart);
         $gameTime = self::getActualGameTime($worldStart);
-        $gameTimeIcon = '//cdn.hexforged.com/images/elements/' . self::GAME_DAY[$gameTime['weekday']] . '@16x.png';
+        $gameTimeIcon = '//' . CDN_HOST . '/images/elements/' . self::GAME_DAY[$gameTime['weekday']] . '@16x.png';
         return '<img id="gameTimeIcon" src="' . $gameTimeIcon . '" /> <span data-start="' . date('Y-m-d-H-i-s', $worldStart) . '">' . self::GAME_DAY[$gameTime['weekday']] . ', ' . self::GAME_MONTH[$gameTime['month']] . ' ' . $gameTime['day'] . ' ' . $gameTime['year'] . 'CE &mdash; ' . sprintf('%02d', $gameTime['hour']) . ':' . sprintf('%02d', $gameTime['minute']) . '</span>';
     }
 

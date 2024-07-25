@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.4 2024/07/19 04:07:52 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.5 2024/07/25 12:57:08 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -77,6 +77,12 @@ const msRealDay = 24 * 60 * 60 * 1000;
  * @type {Date}
  */
 let basisDate = new Date();
+
+/**
+ * CDN Hostname
+ * @type {string}
+ */
+let cdnHost = "";
 
 /**
  * Stores the last date and time string.
@@ -219,9 +225,13 @@ function processData(keyword, data) {
       basisDate.setUTCFullYear(gTime[0], gTime[1] - 1, gTime[2]);
       basisDate.setUTCHours(gTime[3], gTime[4], gTime[5], 0);
       // set current dayIcon
-      lastIcon = $("footer img#gameTimeIcon").src;
-      // begin gametime loop
-      setInterval(() => getGameTime(), 250);
+      setTimeout(function () {
+        lastIcon = $("img#gameTimeIcon").attr("src");
+        let url = new URL("https:" + lastIcon);
+        cdnHost = url.hostname;
+        // begin gametime loop
+        setInterval(() => getGameTime(), 250);
+      }, DELAY);
     } else if (keyword.substr(0, 6) === "header") {
       $("header").html(data);
     } else if (keyword === "verify") {
@@ -450,8 +460,7 @@ function getGameTime() {
   let vMinP = String(vMin).padStart(2, "0");
 
   newDateTime = `${GAME_DAY[vDay]}, ${GAME_MONTH[vMon]} ${vDate} ${vYear}CE &mdash; ${vHourP}:${vMinP}`;
-  newIcon =
-    "//cdn.hexforged.com/images/elements/" + GAME_DAY[vDay] + "@16x.png";
+  newIcon = "//" + cdnHost + "/images/elements/" + GAME_DAY[vDay] + "@16x.png";
 
   if (lastDateTime != newDateTime) {
     if (lastIcon != newIcon) {
