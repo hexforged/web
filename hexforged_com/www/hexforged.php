@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: hexforged.php,v 1.0.4 2024/07/22 23:10:31 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.5 2024/07/25 12:58:17 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -56,8 +56,9 @@ class Output
         } else {
             $image = 'logo@128x';
         }
+        $cdn = CDN_HOST;
         return <<<EOF
-        <a href="/"><img alt="" id="logo" src="//cdn.hexforged.com/images/{$image}.png" loading="eager" /></a>
+        <a href="/"><img alt="" id="logo" src="//{$cdn}/images/{$image}.png" loading="eager" /></a>
 EOF;
     }
 

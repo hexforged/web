@@ -1,6 +1,6 @@
-﻿# $KYAULabs: deploy.yml,v 1.1.0 2024/07/22 01:12:20 -0700 kyau Exp $
+﻿# $KYAULabs: deploy.yml,v 1.1.1 2024/07/24 23:28:26 -0700 kyau Exp $
 
-name: "🌌 Hexforged CI"
+name: "Hexforged CI 🌌"
 
 on:
   push:
@@ -13,22 +13,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # https://github.com/marketplace/actions/checkout
-      - name: Checkout 💾
+      - name: Checkout `hexforged/web` 💾
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: "root"
+          sparse-checkout: |
+            aurora
+            error
+            hexforged_com
           submodules: true
 
-      # create CSS directory
-      - name: Create CSS Directory 🚧
-        run: mkdir -vp hexforged_com/cdn/css
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout `hexforged/media` 💾
+        uses: actions/checkout@v4
+        with:
+          repository: "hexforged/media"
+          fetch-depth: 0
+          path: "media"
+          sparse-checkout: |
+            fonts
+            images
+          token: ${{ secrets.TOKEN_MEDIA }}
+
+      # copy the media repository
+      - name: Copy Media 🔗
+        run: |
+          mkdir -vp root/hexforged_com/cdn/css root/hexforged_com/cdn/fonts root/hexforged_com/cdn/images
+          cp -r media/fonts/* root/hexforged_com/cdn/fonts/
+          cp -r media/images/* root/hexforged_com/cdn/images/
+          cd root/hexforged_com/www
+          ln -s ../cdn/images/favicon@16x.png favicon.png
+          ln -s ../cdn/images/logo-bg@1200x.png og-image.png
 
       # https://github.com/marketplace/actions/sass-build
       - name: Compile Sass 👷
         uses: gha-utilities/sass-build@v0.6.0
         with:
-          source: hexforged_com/cdn/sass/hexforged.sass
-          destination: hexforged_com/cdn/css/hexforged.css
+          source: root/hexforged_com/cdn/sass/hexforged.sass
+          destination: root/hexforged_com/cdn/css/hexforged.css
 
       # https://github.com/marketplace/actions/release-downloader
       - name: Download jQuery Release 💾
@@ -43,13 +66,13 @@ jobs:
       - name: Minify CSS/JS 📦️
         run: |
           chmod a+x /tmp/downloads/minify
-          for file in hexforged_com/cdn/css/*.css; do
+          for file in root/hexforged_com/cdn/css/*.css; do
             if [ -f "$file" ]; then
               /tmp/downloads/minify $file -o ${file%.css}.min.css
               rm $file
             fi
           done
-          for file in hexforged_com/cdn/javascript/*.js; do
+          for file in root/hexforged_com/cdn/javascript/*.js; do
             if [ -f "$file" ]; then
               /tmp/downloads/minify $file -o ${file%.js}.min.js
               rm $file
@@ -79,22 +102,25 @@ jobs:
 
       - name: Copy jQuery & FontAwesome 🔗
         run: |
-          cp /tmp/downloads/fontawesome-free-*-web/css/all.min.css hexforged_com/cdn/css/
-          cp /tmp/downloads/fontawesome-free-*-web/css/fontawesome.min.css hexforged_com/cdn/css/
-          sed -i 's|\.\./webfonts/|\.\./fonts/|g' hexforged_com/cdn/css/all.min.css
-          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.js hexforged_com/cdn/javascript/
-          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.map hexforged_com/cdn/javascript/
+          cp /tmp/downloads/fontawesome-free-*-web/css/all.min.css root/hexforged_com/cdn/css/
+          cp /tmp/downloads/fontawesome-free-*-web/css/fontawesome.min.css root/hexforged_com/cdn/css/
+          cp /tmp/downloads/fontawesome-free-*-web/webfonts/* root/hexforged_com/cdn/fonts/
+          sed -i 's|\.\./webfonts/|\.\./fonts/|g' root/hexforged_com/cdn/css/all.min.css
+          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.js root/hexforged_com/cdn/javascript/
+          cp /tmp/downloads/jquery-jquery-*/dist/jquery.min.map root/hexforged_com/cdn/javascript/
+          curl -L https://github.com/blobject/agave/releases/latest/download/Agave-Regular.ttf --output root/hexforged_com/cdn/fonts/Agave-Regular.ttf
+          curl -L https://github.com/blobject/agave/releases/latest/download/Agave-Bold.ttf --output root/hexforged_com/cdn/fonts/Agave-Bold.ttf
 
       # subresource integrity
       - name: Subresource Integrity 🔒️
         id: subresource
         run: |
-          for file in hexforged_com/cdn/css/*.min.css; do
+          for file in root/hexforged_com/cdn/css/*.min.css; do
             if [ -f "$file" ]; then
               shasum -b -a 512 ${file} | awk '{ print $1 }' | xxd -r -p | base64 | tr -d '\n' > ${file}.sha512
             fi
           done
-          for file in hexforged_com/cdn/javascript/*.min.js; do
+          for file in root/hexforged_com/cdn/javascript/*.min.js; do
             if [ -f "$file" ]; then
               shasum -b -a 512 ${file} | awk '{ print $1 }' | xxd -r -p | base64 | tr -d '\n' > ${file}.sha512
             fi
@@ -104,28 +130,37 @@ jobs:
       - name: Create DotENV 🔐
         id: dotenv
         run: |
-          echo -e "<?php\n" > .env
-          echo -e "define(\"GOOGLE_PUBLIC\", \"${{ secrets.GOOGLE_PUBLIC }}\");" >> .env
-          echo -e "define(\"GOOGLE_SECRET\", \"${{ secrets.GOOGLE_SECRET }}\");" >> .env
-          echo -e "define(\"SQL_USER\", \"${{ secrets.SQL_USER }}\");" >> .env
-          echo -e "define(\"SQL_PASSWD\", \"${{ secrets.SQL_PASSWD }}\");" >> .env
+          echo -e "<?php\n" > root/.env
+          echo -e "define(\"GOOGLE_PUBLIC\", \"${{ secrets.GOOGLE_PUBLIC }}\");" >> root/.env
+          echo -e "define(\"GOOGLE_SECRET\", \"${{ secrets.GOOGLE_SECRET }}\");" >> root/.env
+          echo -e "define(\"SQL_USER\", \"${{ secrets.SQL_USER }}\");" >> root/.env
+          echo -e "define(\"SQL_PASSWD\", \"${{ secrets.SQL_PASSWD }}\");" >> root/.env
       - name: Detect Production Environment 🎬
         if: github.ref == 'refs/heads/main'
         run: |
-          echo -e "define(\"CDN_HOST\", \"cdn.hexforged.com\");" >> .env
-          echo -e "define(\"ENVIRONMENT\", \"production\");" >> .env
+          echo -e "define(\"CDN_HOST\", \"cdn.hexforged.com\");" >> root/.env
+          echo -e "define(\"ENVIRONMENT\", \"production\");" >> root/.env
       - name: Detect Development Environment ⚗️
         if: github.ref == 'refs/heads/develop'
         run: |
-          echo -e "define(\"CDN_HOST\", \"cdn.dev.hexforged.com\");" >> .env
-          echo -e "define(\"ENVIRONMENT\", \"development\");" >> .env
+          echo -e "define(\"CDN_HOST\", \"cdn.dev.hexforged.com\");" >> root/.env
+          echo -e "define(\"ENVIRONMENT\", \"development\");" >> root/.env
+
+      # repo cleanup
+      - name: Cleanup Directory 🗑️
+        run: |
+          rm -rf root/.gitignore root/.gitleaksignore root/.gitmodules root/aurora/.gitignore
+          rm -rf root/*.md root/*.toml root/commitlint.config.js
+          rm -rf root/aurora/*.md root/aurora/*.toml root/aurora/commitlint.config.js
+          rm -rf root/aurora/settings.example.php root/aurora/.github
 
       # https://github.com/marketplace/actions/rsync-deployments-action
       - name: Rsync to Production 🚀
         if: github.ref == 'refs/heads/main'
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr  --exclude=".git" --exclude="aurora/.git"
+          path: root/
+          switches: -lrtvz --delete-excluded --exclude=".git" --exclude="aurora/.git" --specials
           remote_path: ${{ secrets.TARGET }}
           remote_host: ${{ secrets.SSH_HOST }}
           remote_user: ${{ secrets.SSH_USER }}
@@ -138,7 +173,8 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr  --exclude=".git" --exclude="aurora/.git"
+          path: root/
+          switches: -lrtvz --delete-excluded --exclude=".git" --exclude="aurora/.git" --specials
           remote_path: ${{ secrets.TARGET }}
           remote_host: ${{ secrets.SSH_HOST_DEV }}
           remote_user: ${{ secrets.SSH_USER }}
