@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: metadata.php,v 1.0.4 2024/07/25 12:38:47 -0700 kyau Exp $
+ * $KYAULabs: metadata.php,v 1.0.5 2024/07/26 01:57:54 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,8 +29,9 @@
 
 namespace Hexforged;
 
-include_once(__DIR__ . '/../.env');
+require_once(__DIR__ . '/../../.env');
 include_once(__DIR__ . '/../../aurora/sql.inc.php');
+
 $sql ??= new \KYAULabs\SQLHandler('hexforged');
 
 /**

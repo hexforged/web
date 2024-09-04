@@ -1,4 +1,4 @@
-﻿# $KYAULabs: deploy.yml,v 1.1.1 2024/07/24 23:28:26 -0700 kyau Exp $
+﻿# $KYAULabs: deploy.yml,v 1.1.2 2024/07/31 00:24:43 -0700 kyau Exp $
 
 name: "Hexforged CI 🌌"
 
@@ -135,6 +135,9 @@ jobs:
           echo -e "define(\"GOOGLE_SECRET\", \"${{ secrets.GOOGLE_SECRET }}\");" >> root/.env
           echo -e "define(\"SQL_USER\", \"${{ secrets.SQL_USER }}\");" >> root/.env
           echo -e "define(\"SQL_PASSWD\", \"${{ secrets.SQL_PASSWD }}\");" >> root/.env
+          echo -e "define(\"PASSWD_PEPPER\", \"${{ secrets.PASSWD_PEPPER }}\");" >> root/.env
+          echo -e "define(\"SESSION_NAME\", \"${{ secrets.SESSION_NAME }}\");" >> root/.env
+          echo -e "define(\"SESSION_KEY\", \"${{ secrets.SESSION_KEY }}\");" >> root/.env
       - name: Detect Production Environment 🎬
         if: github.ref == 'refs/heads/main'
         run: |

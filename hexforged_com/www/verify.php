@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: verify.php,v 1.0.1 2024/07/22 22:26:39 -0700 kyau Exp $
+ * $KYAULabs: verify.php,v 1.0.2 2024/07/26 02:01:51 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -31,7 +31,9 @@
 $rus = getrusage();
 require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../../aurora/aurora.inc.php');
+require_once(__DIR__ . '/../backend/sessions.php');
 
+$session ??= new Hexforged\Session(true);
 $hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
 $hexforged->sessions = true;
 $hexforged->title = 'Hexforged: Verify Account';
