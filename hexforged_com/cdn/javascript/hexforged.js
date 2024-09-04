@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.5 2024/07/25 12:57:08 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.6 2024/07/31 11:09:23 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -435,6 +435,72 @@ function processFormData(id, data) {
         "darkred"
       );
     }
+  } else if (id === "account-login") {
+    if (sections[0] === "fail") {
+      // account-login: fail
+      if (sections[1].length > 0) {
+        let fail = sections[1].split(":");
+        fail_loop: for (let i = 0; i < fail.length; i++) {
+          switch (fail[i]) {
+            case "email-check":
+              $("#hex-input__email")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
+                );
+              break fail_loop;
+            case "empty-email":
+              $("#hex-input__email")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
+                );
+              break;
+            case "empty-passwd":
+              $("#hex-input__passwd")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
+                );
+              break;
+            case "passwd-check":
+              $("#hex-input__passwd")
+                .parent()
+                .after(
+                  '<span class="hex-form__fail hex-color__red">Password is invalid.</span>'
+                );
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      log(
+        "Failed: <form#" + id + "/> (" + data.length + ")",
+        "ERROR",
+        "darkred"
+      );
+      $("#submit > span").html(lastSubmit);
+    } else if (sections[0] === "success") {
+      // account-login: success
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__success hex-color__green">Login successful!</span>'
+      );
+      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
+      setTimeout(function () {
+        location.href = "https://" + document.location.hostname + "/dashboard/";
+      }, 150);
+    } else {
+      $("form > .hex-margin__top-one:nth-child(1)").after(
+        '<span class="hex-form__fail hex-color__red">Login failed!</span>'
+      );
+      log(
+        "Failed: <form#" + id + "/> (" + data.length + ")",
+        "ERROR",
+        "darkred"
+      );
+      $("#submit > span").html(lastSubmit);
+    }
   } else {
     log("Failed: <form#" + id + "/> (" + data.length + ")", "ERROR", "darkred");
   }
@@ -485,6 +551,7 @@ $(function () {
     if (
       $("main").is("#register") ||
       $("main").is("#login") ||
+      $("main").is("#logout") ||
       $("main").is("#verify") ||
       $("main").is("#dashboard")
     ) {

@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: 404.php,v 1.0.3 2024/07/26 02:02:06 -0700 kyau Exp $
+ * $KYAULabs: login.php,v 1.0.3 2024/07/26 02:01:28 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -29,13 +29,16 @@
  */
 
 $rus = getrusage();
-require_once(__DIR__ . '/../.env');
-require_once(__DIR__ . '/../aurora/aurora.inc.php');
-require_once(__DIR__ . '/../hexforged_com/backend/sessions.php');
+require_once(__DIR__ . '/../../.env');
+require_once(__DIR__ . '/../../aurora/aurora.inc.php');
+require_once(__DIR__ . '/../backend/sessions.php');
 
 $session ??= new Hexforged\Session(true);
-$hexforged = new KYAULabs\Aurora('index.html', '/hexforged_com/cdn', true, true);
-$hexforged->title = 'Hexforged: 404 Not Found!';
+$user = ucwords($_SESSION['user']);
+Hexforged\Session::destroySession();
+$hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
+$hexforged->sessions = true;
+$hexforged->title = 'Hexforged: {$user} Logout';
 $hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
 $hexforged->dns = [CDN_HOST];
 $hexforged->preload = [
@@ -51,17 +54,18 @@ $hexforged->preload = [
     '/fonts/SavaPro-Black.otf' => 'font',
 ];
 $hexforged->css = [
-    '../hexforged_com/cdn/css/fontawesome.min.css' => '//' . CDN_HOST . '/css/fontawesome.min.css',
-    '../hexforged_com/cdn/css/all.min.css' => '//' . CDN_HOST . '/css/all.min.css',
-    '../hexforged_com/cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
+    '../cdn/css/fontawesome.min.css' => '//' . CDN_HOST . '/css/fontawesome.min.css',
+    '../cdn/css/all.min.css' => '//' . CDN_HOST . '/css/all.min.css',
+    '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
 ];
 $hexforged->js = [
-    '../hexforged_com/cdn/javascript/jquery.min.js' => '//' . CDN_HOST . '/javascript/jquery.min.js',
-    '../hexforged_com/cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
+    '../cdn/javascript/jquery.min.js' => '//' . CDN_HOST . '/javascript/jquery.min.js',
+    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
+    '<external>' => '//www.google.com/recaptcha/api.js',
 ];
 $hexforged->htmlHeader();
 // <content>
-echo "\t<main id=\"not-found\"><a href=\"/\"></a></main>\n\t<footer></footer>\n";
+echo "\t<header id=\"header-medium\"></header>\n\t<main id=\"logout\">{$user} has been logged out.</main>\n\t<footer></footer>\n";
 // </content>
 $hexforged->htmlFooter();
 echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);

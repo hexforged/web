@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.2 2024/07/19 04:07:25 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.3 2024/07/31 00:52:57 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -32,6 +32,10 @@ namespace Hexforged;
 require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../../aurora/sql.inc.php');
 require_once(__DIR__ . '/email.php');
+require_once(__DIR__ . '/sessions.php');
+
+$session ??= new Session(true);
+$sql ??= new \KYAULabs\SQLHandler('hexforged');
 
 use \KYAULabs\SQLHandler as SQLHandler;
 
@@ -137,11 +141,12 @@ class Account
                 $token = self::uuidv4();
 
                 // hash the password
-                $hash = password_hash($data['passwd'], PASSWORD_BCRYPT);
+                $peppered = hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER);
+                $hash = password_hash($peppered, PASSWORD_BCRYPT);
 
                 // insert user into database
                 $submit = [
-                    ':username' => $data['username'],
+                    ':username' => strtolower($data['username']),
                     ':passwd' => $hash,
                     ':email' => $data['email'],
                     ':lastip' => $_SERVER['REMOTE_ADDR']
@@ -277,7 +282,76 @@ EOF;
      */
     public static function Login(SQLHandler $sql, array $data): string
     {
-        return '';
+        $fail = false;
+        $list = [];
+
+        $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
+        $peppered = hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER);
+
+        // check if email address exists
+        if ($sql->query('SELECT Count(*) AS `total` FROM `users` WHERE `email` = :email', [':email' => $email])->fetchObject()->total === 0) {
+            $fail = true;
+            $list[] = 'email-check';
+        }
+
+        if (!empty($data['email']) && !empty($data['passwd'])) {
+            // pull user data
+            $user = $sql->query('SELECT * FROM `users` WHERE `email` = :email', [':email' => $email])->fetchObject();
+
+            // check that the passwords match
+            if (!password_verify($peppered, $user->passwd)) {
+                $fail = true;
+                $list[] = 'passwd-check';
+            }
+
+            // check if the user if verified
+            if (!$user->activated) {
+                $fail = true;
+                $list[] = 'verify-check';
+            }
+
+            // check if the user account is disabled
+            if ($user->disabled) {
+                $fail = true;
+                $list[] = 'disabled-check';
+            }
+
+            // if failures detect, exit now
+            if ($fail) {
+                return self::GenerateString($fail, $list);
+            }
+
+            Session::sessionRegenerateID();
+            $token = Account::uuidv4();
+
+            // log user in
+            $_SESSION['id'] = $user->id;
+            $_SESSION['gid'] = $user->gid;
+            $_SESSION['user'] = $user->username;
+            $_SESSION['email'] = $user->email;
+            $_SESSION['perms'] = $user->permissions;
+            $_SESSION['lastlogin'] = $user->lastlogin;
+            $_SESSION['lastip'] = long2ip(sprintf("%d", $user->lastip));
+            $_SESSION['token'] = $token;
+
+            // update user database (lastlogin / lastip)
+            $submit = [
+                ':lastip' => $_SERVER['REMOTE_ADDR'],
+                ':token' => $token,
+                ':email' => $email,
+            ];
+            $sql->query('UPDATE `users` SET `lastip` = INET_ATON(:lastip), `lastlogin` = NOW(), `token` = UUID_TO_BIN(:token) WHERE `email` = :email', $submit);
+            unset($submit);
+        } else {
+            $fail = true;
+            if (empty($data['email'])) {
+                $list[] = 'empty-email';
+            }
+            if (empty($data['passwd'])) {
+                $list[] = 'empty-passwd';
+            }
+        }
+        return self::GenerateString($fail, $list);
     }
 
     /**

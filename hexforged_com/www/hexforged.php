@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: hexforged.php,v 1.0.5 2024/07/25 12:58:17 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.6 2024/07/31 00:00:48 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -33,6 +33,9 @@ namespace Hexforged;
 require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../backend/account.php');
 require_once(__DIR__ . '/../backend/metadata.php');
+require_once(__DIR__ . '/../backend/sessions.php');
+
+$session ??= new Session(true);
 
 /**
  * Class Output
@@ -57,9 +60,19 @@ class Output
             $image = 'logo@128x';
         }
         $cdn = CDN_HOST;
-        return <<<EOF
+        $ret = <<<EOF
         <a href="/"><img alt="" id="logo" src="//{$cdn}/images/{$image}.png" loading="eager" /></a>
 EOF;
+        if ($size === '') {
+            $user = ucwords($_SESSION['user']);
+            $ret .= <<<EOF
+        <div class="hex-dash__welcome">
+            <p>Welcome back, <span class="hex-color__h_cyan">{$user}!</span></p>
+            <p><a href="/account">manage</a> | <a href="/logout">logout</a></p>
+        </div>
+EOF;
+        }
+        return $ret;
     }
 
     /**
@@ -152,11 +165,11 @@ EOF;
                 <h4><i class="fa-solid fa-key"></i> Login</h4>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__email" autocomplete="email" required name="email" type="text" />
+                <input class="hex-input__input" id="hex-input__email" autocomplete="email" name="email" type="text" />
                 <label class="hex-input__label" for="hex-input__email">Email</label>
             </div>
             <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwd" autocomplete="current-password" required name="password" type="password" />
+                <input class="hex-input__input" id="hex-input__passwd" autocomplete="current-password" name="passwd" type="password" />
                 <label class="hex-input__label" for="hex-input__passwd">Password</label>
             </div>
             <div class="hex-checkbox">
@@ -183,6 +196,22 @@ EOF;
             <div class="hex-margin__top-one"><span class="token"></span></div>
             <div class="hex-align__center hex-margin__top-one"><span class="loader"></span></div>
         </form>
+EOF;
+    }
+}
+
+class Dashboard
+{
+    public static function Home(): string
+    {
+        return <<<EOF
+        <div class="hex-flex">
+            <p>User: #{$_SESSION['id']} - {$_SESSION['user']}</p>
+            <p>Group ID: {$_SESSION['gid']}</p>
+            <p>Email: {$_SESSION['email']}</p>
+            <p>Last Login: {$_SESSION['lastlogin']} from {$_SESSION['lastip']}</p>
+            <p>Last Activity: {$_SESSION['lastactivity']}</p>
+        </div>
 EOF;
     }
 }
@@ -215,7 +244,7 @@ if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
             echo Output::Verify();
             break;
         case 'dashboard':
-            //echo Output::Dashboard();
+            echo Dashboard::Home();
             break;
         default:
             break;

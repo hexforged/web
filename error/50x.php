@@ -2,7 +2,7 @@
 
 /**
  *
- * $KYAULabs: 50x.php,v 1.0.2 2024/07/22 22:26:56 -0700 kyau Exp $
+ * $KYAULabs: 50x.php,v 1.0.3 2024/07/26 02:02:31 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -33,7 +33,9 @@
 $rus = getrusage();
 require_once(__DIR__ . '/../.env');
 require_once(__DIR__ . '/../aurora/aurora.inc.php');
+require_once(__DIR__ . '/../hexforged_com/backend/sessions.php');
 
+$session ??= new Hexforged\Session(true);
 $hexforged = new KYAULabs\Aurora('index.html', '/hexforged_com/cdn', true, true);
 $hexforged->title = 'Hexforged: 500 Internal Server Error!';
 $hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
