@@ -1,8 +1,7 @@
 <?php
 
 /**
- *
- * $KYAULabs: login.php,v 1.0.3 2024/07/26 02:01:28 -0700 kyau Exp $
+ * $KYAULabs: logout.php,v 1.0.4 2024/09/06 11:08:38 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -31,11 +30,16 @@
 $rus = getrusage();
 require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../../aurora/aurora.inc.php');
+require_once(__DIR__ . '/../backend/account.php');
 require_once(__DIR__ . '/../backend/sessions.php');
 
 $session ??= new Hexforged\Session(true);
-$user = ucwords($_SESSION['user']);
-Hexforged\Session::destroySession();
+if (!Hexforged\Account::isUserLoggedIn()) {
+    header('Location: /');
+    exit(0);
+}
+$user = array_key_exists('user', $_SESSION) ? ucwords($_SESSION['user']) : 'Ghost';
+Hexforged\Account::Logout($session);
 $hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
 $hexforged->sessions = true;
 $hexforged->title = 'Hexforged: {$user} Logout';
