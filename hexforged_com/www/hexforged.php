@@ -1,8 +1,7 @@
 <?php
 
 /**
- *
- * $KYAULabs: hexforged.php,v 1.0.6 2024/07/31 00:00:48 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.7 2024/09/07 11:48:37 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -204,13 +203,17 @@ class Dashboard
 {
     public static function Home(): string
     {
+        $timestamp = new \DateTime();
+        $timestamp->setTimestamp($_SESSION['lastactivity']);
+        $lastActivity = date_format($timestamp, 'Y-m-d G:i:s');
         return <<<EOF
-        <div class="hex-flex">
-            <p>User: #{$_SESSION['id']} - {$_SESSION['user']}</p>
-            <p>Group ID: {$_SESSION['gid']}</p>
-            <p>Email: {$_SESSION['email']}</p>
-            <p>Last Login: {$_SESSION['lastlogin']} from {$_SESSION['lastip']}</p>
-            <p>Last Activity: {$_SESSION['lastactivity']}</p>
+        <div class="hex-flex hex-align__left">
+            <p><strong>User:</strong> <span class="hex-color__cyan">#{$_SESSION['id']} - {$_SESSION['user']}</span></p>
+            <p><strong>Group ID:</strong> <span class="hex-color__cyan">{$_SESSION['gid']}</span></p>
+            <p><strong>Email:</strong> <span class="hex-color__cyan">{$_SESSION['email']}</span></p>
+            <p><strong>Last Login:</strong> <span class="hex-color__cyan">{$_SESSION['lastlogin']}</span></p>
+            <p><strong>Last IP:</strong> <span class="hex-color__cyan">{$_SESSION['lastip']}</span></p>
+            <p><strong>Last Activity:</strong> <span class="hex-color__cyan">{$lastActivity}</span></p>
         </div>
 EOF;
     }
@@ -253,13 +256,13 @@ if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
     $form = strtolower(trim($_POST['form']));
     switch ($form) {
         case 'account-create':
-            echo Account::Create($sql, $_POST);
+            echo Account::Create($_POST);
             break;
         case 'account-login':
-            echo Account::Login($sql, $_POST);
+            echo Account::Login($_POST);
             break;
         case 'account-verify':
-            echo Account::Verify($sql, $_POST['token']);
+            echo Account::Verify(htmlspecialchars($_POST['token']));
             break;
         default:
             break;

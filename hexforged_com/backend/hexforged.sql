@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.4 2024/07/26 03:57:54 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.5 2024/09/05 02:23:53 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -137,8 +137,25 @@ CREATE TABLE `users` (
 --
 
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` VALUES (1,0,'test','$2y$10$Ity2fTUY6gl.G7ol/mAeWuz90IPLgmviSzDLzMVVwzzkSTgI76Md6','test@test.com',NULL,1,NOW(),NOW(),INET_ATON('0.0.0.0'),1,0);
+INSERT INTO `users` VALUES (1,0,'test','$2y$10$FB5LFmlguuElwdxZamhADO7wWUnHVvk6yFwvSjNdRjP/sk8443ySG','test@test.com',NULL,NULL,1,NOW(),NOW(),INET_ATON('0.0.0.0'),1,0);
 UNLOCK TABLES;
+
+--
+-- Table structure for table `users_tokens`
+--
+
+DROP TABLE IF EXISTS `users_tokens`;
+CREATE TABLE `users_tokens` (
+        `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Token ID',
+        `selector` binary(12) NOT NULL COMMENT 'Token Selector',
+        `validator` varchar(60) DEFAULT NULL COMMENT 'Token Validator Hash',
+        `uid` int(12) unsigned NOT NULL COMMENT 'User ID',
+        `expiry` timestamp NOT NULL DEFAULT DATE_ADD(NOW(), INTERVAL 30 DAY) COMMENT 'Token Expiry Date',
+        -- FROM_UNIXTIME(), UNIX_TIMESTAMP()
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `selector` (`selector`),
+        CONSTRAINT `userid` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
 -- Table structure for table `version`
@@ -166,4 +183,5 @@ LOCK TABLES `version` WRITE;
 INSERT INTO `version` VALUES (1,0,1,0,'dreams','2024-07-11 10:23:00');
 INSERT INTO `version` VALUES (2,0,1,1,null,'2024-07-16 01:52:00');
 INSERT INTO `version` VALUES (3,0,1,2,null,'2024-07-17 21:28:00');
+INSERT INTO `version` VALUES (4,0,1,3,null,'2024-09-05 05:39:00');
 UNLOCK TABLES;

@@ -1,8 +1,7 @@
 <?php
 
 /**
- *
- * $KYAULabs: sessions.php,v 1.0.0 2024/07/31 11:01:03 -0700 kyau Exp $
+ * $KYAULabs: sessions.php,v 1.0.1 2024/09/07 11:42:30 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -226,16 +225,30 @@ class Session
      */
     public static function lastActivity(): void
     {
-        error_log("session: lastactivity check...");
-        if (isset($_SESSION['lastactivity']) && (time() - $_SESSION['lastactivity'] > 1800)) {
-            error_log("session: too old, discarding!");
-            // last session request was more than 30 minutes ago
+        // discard sessions that have been idle longer than 15 minutes
+        if (isset($_SESSION['lastactivity']) && (time() - $_SESSION['lastactivity'] > 900)) {
             self::destroySession();
         } else if (isset($_SESSION['lastactivity']) && (time() - $_SESSION['lastactivity'] > 60)) {
-            error_log("session: recycling.");
             $_SESSION['lastactivity'] = time();
         }
-        error_log("session: lastactivity finished!");
+    }
+
+    public static function logUserIn(object $user, string $token): bool
+    {
+        if (!isset($user) || $token === '') return false;
+        if (self::sessionRegenerateID()) {
+            $_SESSION['id'] = $user->id;
+            $_SESSION['gid'] = $user->gid;
+            $_SESSION['user'] = $user->username;
+            $_SESSION['email'] = $user->email;
+            $_SESSION['perms'] = $user->permissions;
+            $_SESSION['lastlogin'] = $user->lastlogin;
+            $_SESSION['lastip'] = long2ip(sprintf("%d", $user->lastip));
+            $_SESSION['token'] = $token;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -265,6 +278,6 @@ class Session
         ]);
         $_SESSION['lastactivity'] = time();
 
-        return 1;
+        return true;
     }
 }

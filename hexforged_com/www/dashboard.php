@@ -1,8 +1,7 @@
 <?php
 
 /**
- *
- * $KYAULabs: dashboard.php,v 1.0.0 2024/08/04 01:29:51 -0700 kyau Exp $
+ * $KYAULabs: dashboard.php,v 1.0.1 2024/09/07 11:47:11 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -31,11 +30,13 @@
 $rus = getrusage();
 require_once(__DIR__ . '/../../.env');
 require_once(__DIR__ . '/../../aurora/aurora.inc.php');
+require_once(__DIR__ . '/../backend/account.php');
 require_once(__DIR__ . '/../backend/sessions.php');
 
 $session ??= new Hexforged\Session(true);
-if (isset($_SESSION) && empty($_SESSION['token'])) {
+if (!Hexforged\Account::isUserLoggedIn()) {
     header('Location: /');
+    exit(0);
 }
 $hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
 $hexforged->sessions = true;

@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.7 2024/07/31 00:00:16 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.0.8 2024/09/07 11:43:01 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -34,7 +34,8 @@ $color: rgb(150, 150, 150)
 $color-highlight: rgb(222, 222, 222)
 $color-gold: rgb(217, 186, 120)
 $color-border: rgb(45, 41, 28)
-$fontstack: Sava, Georgia, Times, "Times New Roman", serif
+$fontstack: SUSE, Georgia, Times, "Times New Roman", serif
+$fontstack-heading: Sava, Georgia, Times, "Times New Roman", serif
 $fontstack-mono: Agave, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
 
 $screen-small: 576px
@@ -54,6 +55,15 @@ $screen-xlarge: 1200px
     src: url($filepath + '.' + $ext) format('truetype')
     font-weight: $weight
     font-style: $style
+
+@mixin font-face-var($font-name, $file, $ext: 'ttf', $weight: 100 400)
+  $filepath: '../fonts/' + $file
+
+  @font-face
+    font-family: '#{$font-name}'
+    src: url($filepath + '.' + $ext) format('truetype')
+    font-weight: $weight
+    font-style: normal
 
 @mixin font-size($font-size)
   font-size: $font-size
@@ -96,6 +106,13 @@ $screen-xlarge: 1200px
 
 
 /**
+ * Family: SUSE
+ * https://github.com/SUSE/suse-font
+ */
+@include font-face-var('SUSE', 'SUSE-var', 'woff2')
+
+
+/**
  * Globals
  */
 *
@@ -130,7 +147,7 @@ a ,a:link, a:active, a:visited
 
 h1,h2,h3,h4,h5,h6
   color: $color-gold
-  font-family: $fontstack
+  font-family: $fontstack-heading
   font-weight: 700
   margin-bottom: 1ch
 
@@ -170,6 +187,7 @@ h6
  */
 header
   color: $color-highlight
+  font-family: $fontstack-heading
   position: fixed
   top: 0
   height: 128px
@@ -241,9 +259,13 @@ main
     height: calc(100% - 4rem - 135px - 350px)
 
   &#dashboard
+    font-family: $fontstack
     margin-top: 128px
     height: calc(100% - 4rem - 128px)
   
+  &#login, &#logout, &#register, &#verify
+    font-family: $fontstack-heading
+
   &#login, &#register, &#verify
     margin-top: 180px
     height: calc(100% - 4rem - 180px)
@@ -399,6 +421,7 @@ main
       text-shadow: none
 
   p.login-auth
+    font-family: $fontstack-heading
     @include font-size(14pt)
     font-weight: 600
     margin-top: 2rem
@@ -511,7 +534,7 @@ footer
     background-size: 330% 100%
     border-radius: 0.25em
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2)
-    font-family: $fontstack
+    font-family: $fontstack-heading
     font-size: 12pt
     line-height: 2.0
     padding: 0.5em 2em

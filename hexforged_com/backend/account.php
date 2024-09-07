@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.3 2024/07/31 00:52:57 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.4 2024/09/07 11:41:21 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -34,10 +34,7 @@ require_once(__DIR__ . '/../../aurora/sql.inc.php');
 require_once(__DIR__ . '/email.php');
 require_once(__DIR__ . '/sessions.php');
 
-$session ??= new Session(true);
 $sql ??= new \KYAULabs\SQLHandler('hexforged');
-
-use \KYAULabs\SQLHandler as SQLHandler;
 
 class Account
 {
@@ -49,13 +46,66 @@ class Account
      * 
      * @return string The generated success/fail string.
      */
-    private static function GenerateString(bool $fail, array $list): string
+    private static function generateString(bool $fail, array $list): string
     {
         $str = $fail ? 'fail' : 'success';
         if (!empty($list)) {
             $str .= '=' . implode(':', $list);
         }
         return $str;
+    }
+
+    private static function generateTokens(): array
+    {
+        $selector = bin2hex(random_bytes(12));
+        $validator = self::uuidv4();
+
+        return [$selector, $validator, $selector . ':' . $validator];
+    }
+
+    private static function parseToken(string $token): ?array
+    {
+        $parts = explode(':', $token);
+        if ($parts && count($parts) == 2) {
+            return [$parts[0], $parts[1]];
+        }
+        return null;
+    }
+
+    private static function rememberMe(int $uid, int $day = 30)
+    {
+        global $sql;
+        [$selector, $validator, $token] = self::generateTokens();
+
+        // delete current user tokens
+        self::removeTokens($uid);
+
+        // convert days to seconds
+        $expiry = time() + 60 * 60 * 24 * $day;
+
+        $peppered = base64_encode(hash_hmac('sha512', $validator, PASSWD_PEPPER, true));
+        $hashValidator = password_hash($peppered, PASSWORD_BCRYPT);
+
+        // insert tokens into database
+        $submit = [
+            ':selector' => $selector,
+            ':validator' => $hashValidator,
+            ':userid' => $uid,
+            ':expiry' => $expiry
+        ];
+        $sql->query('INSERT INTO `users_tokens` (`selector`, `validator`, `uid`, `expiry`) VALUES (UNHEX(:selector), :validator, :userid, FROM_UNIXTIME(:expiry))', $submit);
+        unset($submit);
+
+        // set cookie
+        setcookie('remember_me', $token, $expiry);
+    }
+
+    private static function removeTokens(int $uid): void
+    {
+        global $sql;
+        $submit = [':uid' => $uid];
+        $sql->query('DELETE FROM `users_tokens` WHERE `uid` = :uid', $submit);
+        unset($submit);
     }
 
     /**
@@ -73,16 +123,48 @@ class Account
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
+    private static function userLogin(object $user): void
+    {
+        global $sql;
+        $token = self::uuidv4();
+        Session::logUserIn($user, $token);
+
+        // update user database (lastlogin / lastip)
+        $submit = [
+            ':lastip' => $_SERVER['REMOTE_ADDR'],
+            ':token' => $token,
+            ':email' => $user->email,
+        ];
+        $sql->query('UPDATE `users` SET `lastip` = INET_ATON(:lastip), `lastlogin` = NOW(), `token` = UUID_TO_BIN(:token) WHERE `email` = :email', $submit);
+        unset($submit);
+    }
+
+    private static function validateToken(array $tokens): bool
+    {
+        global $sql;
+        if (!$tokens) return null;
+
+        $submit = [':selector' => $tokens[0]];
+        $users_tokens = $sql->query('SELECT * FROM `users_tokens` WHERE `selector` = UNHEX(:selector) AND `expiry` > NOW() LIMIT 1', $submit)->fetchObject();
+        unset($submit);
+
+        if (isset($users_tokens->validator)) {
+            $peppered = base64_encode(hash_hmac('sha512', $tokens[1], PASSWD_PEPPER, true));
+            return password_verify($peppered, $users_tokens->validator);
+        }
+        return false;
+    }
+
     /**
      * Validate/Create logic for the account register form.
      * 
-     * @param SQLHandler $sql The SQL handler passed from AJAX the called script.
      * @param array $data Form POST data from the AJAX submission ($_POST).
      * 
      * @return string A generated success/fail string.
      */
-    public static function Create(SQLHandler $sql, array $data): string
+    public static function Create(array $data): string
     {
+        global $sql;
         $fail = false;
         $list = [];
 
@@ -134,14 +216,14 @@ class Account
 
                 // if failures detect, exit now
                 if ($fail) {
-                    return self::GenerateString($fail, $list);
+                    return self::generateString($fail, $list);
                 }
 
                 // generate an activation token
                 $token = self::uuidv4();
 
                 // hash the password
-                $peppered = hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER);
+                $peppered = base64_encode(hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER, true));
                 $hash = password_hash($peppered, PASSWORD_BCRYPT);
 
                 // insert user into database
@@ -157,7 +239,7 @@ class Account
                 if ($sql->query('SELECT Count(*) AS `total` FROM `users` WHERE `username` = :username', [':username' => $data['username']])->fetchObject()->total === 0) {
                     $fail = true;
                     $list[] = 'account-add';
-                    return self::GenerateString($fail, $list);
+                    return self::generateString($fail, $list);
                 }
 
                 // get user id
@@ -174,6 +256,8 @@ class Account
                 $subject = 'Hexforged Account Activation';
                 $img = __DIR__ . '/../cdn/images/logo@256x.png';
                 $image = '';
+                $url = ENVIRONMENT === 'development' ? 'dev.hexforged.com' : 'hexforged.com';
+                
 
                 if (file_exists($img) && is_readable($img)) {
                     $image = base64_encode(file_get_contents($img));
@@ -238,7 +322,7 @@ class Account
   <tr><td>
     <table cellspacing="0" cellpadding="0">
       <tr><td class="button" bgcolor="#4f8a8b">
-        <a href="https://hexforged.com/verify/{$token}">Confirm your email</a>
+        <a href="https://{$url}/verify/{$token}">Confirm your email</a>
       </td></tr>
     </table>
   </tr></td>
@@ -269,24 +353,53 @@ EOF;
                 $list[] = 'empty-passwdConfirm';
             }
         }
-        return self::GenerateString($fail, $list);
+        return self::generateString($fail, $list);
+    }
+
+    public static function isUserLoggedIn(): bool
+    {
+        global $sql;
+        if (isset($_SESSION) && !empty($_SESSION['token'])) {
+            return true;
+        }
+
+        // remember me
+        if (isset($_COOKIE['remember_me'])) {
+            $token = htmlspecialchars($_COOKIE['remember_me']);
+            $tokens = self::parseToken($token);
+            if (!$tokens) return false;
+            if ($token && self::validateToken($tokens)) {
+                $submit = [
+                    ':selector' => $tokens[0]
+                ];
+                $user = $sql->query('SELECT `users`.* FROM `users` INNER JOIN `users_tokens` AS `ut` ON `ut`.`uid` = `users`.`id` WHERE `ut`.`selector` = UNHEX(:selector) AND `expiry` > NOW() LIMIT 1', $submit)->fetchObject();
+            }
+            if (isset($user->username)) {
+                self::userLogin($user);
+                //header('Location: /dashboard');
+                header('Location: ' . $_SERVER['REQUEST_URI']);
+                exit(0);
+            }
+        }
+
+        return false;
     }
 
     /**
      * Validate/Create logic for the login form.
      * 
-     * @param SQLHandler $sql The SQL handler passed from AJAX the called script.
      * @param array $data Form POST data from the AJAX submission ($_POST).
      * 
      * @return string A generated success/fail string.
      */
-    public static function Login(SQLHandler $sql, array $data): string
+    public static function Login(array $data): string
     {
+        global $sql;
         $fail = false;
         $list = [];
 
         $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
-        $peppered = hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER);
+        $peppered = base64_encode(hash_hmac('sha512', $data['passwd'], PASSWD_PEPPER, true));
 
         // check if email address exists
         if ($sql->query('SELECT Count(*) AS `total` FROM `users` WHERE `email` = :email', [':email' => $email])->fetchObject()->total === 0) {
@@ -318,30 +431,16 @@ EOF;
 
             // if failures detect, exit now
             if ($fail) {
-                return self::GenerateString($fail, $list);
+                return self::generateString($fail, $list);
             }
 
-            Session::sessionRegenerateID();
-            $token = Account::uuidv4();
-
             // log user in
-            $_SESSION['id'] = $user->id;
-            $_SESSION['gid'] = $user->gid;
-            $_SESSION['user'] = $user->username;
-            $_SESSION['email'] = $user->email;
-            $_SESSION['perms'] = $user->permissions;
-            $_SESSION['lastlogin'] = $user->lastlogin;
-            $_SESSION['lastip'] = long2ip(sprintf("%d", $user->lastip));
-            $_SESSION['token'] = $token;
+            self::userLogin($user);
 
-            // update user database (lastlogin / lastip)
-            $submit = [
-                ':lastip' => $_SERVER['REMOTE_ADDR'],
-                ':token' => $token,
-                ':email' => $email,
-            ];
-            $sql->query('UPDATE `users` SET `lastip` = INET_ATON(:lastip), `lastlogin` = NOW(), `token` = UUID_TO_BIN(:token) WHERE `email` = :email', $submit);
-            unset($submit);
+            // remember me
+            if (array_key_exists('remember', $data) && $data['remember'] === '1') {
+                self::rememberMe($user->id);
+            }
         } else {
             $fail = true;
             if (empty($data['email'])) {
@@ -351,18 +450,36 @@ EOF;
                 $list[] = 'empty-passwd';
             }
         }
-        return self::GenerateString($fail, $list);
+        return self::generateString($fail, $list);
+    }
+
+    public static function Logout(Session $session): void
+    {
+        if (self::isUserLoggedIn()) {
+            // delete current user tokens
+            self::removeTokens($_SESSION['id']);
+
+            // destroy cookies
+            if (isset($_COOKIE['remember_me'])) {
+                unset($_COOKIE['remember_me']);
+                setcookie('remember_me', '', time() - 3600, '/');
+            }
+
+            // destroy the session and session data
+            $session->destroySession();
+        }
     }
 
     /**
      * Verify a new account.
      * 
-     * @param SQLHandler $sql The SQL handler passed from AJAX the called script.
+     * @param string $token The verification token sent from the client.
      * 
      * @return string A generated success/fail string.
      */
-    public static function Verify(SQLHandler $sql, string $token): string
+    public static function Verify(string $token): string
     {
+        global $sql;
         $fail = false;
         $list = [];
 
@@ -386,6 +503,6 @@ EOF;
             $list[] = $user->username;
         }
 
-        return self::GenerateString($fail, $list);
+        return self::generateString($fail, $list);
     }
 }
