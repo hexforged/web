@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.4 2024/09/07 11:41:21 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.5 2024/09/09 01:48:36 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -36,6 +36,11 @@ require_once(__DIR__ . '/sessions.php');
 
 $sql ??= new \KYAULabs\SQLHandler('hexforged');
 
+/**
+ * Class Account
+ *
+ * This class handles account authorization, creation and management.
+ */
 class Account
 {
     /**
@@ -55,6 +60,12 @@ class Account
         return $str;
     }
 
+    /**
+     * Generates a set of tokens used for authentication.
+     *
+     * @return array Contains the selector, validator, and a combined token in the format `selector:validator`.
+     * @throws Exception If it was not possible to gather sufficient entropy from random_bytes.
+     */
     private static function generateTokens(): array
     {
         $selector = bin2hex(random_bytes(12));
@@ -63,6 +74,12 @@ class Account
         return [$selector, $validator, $selector . ':' . $validator];
     }
 
+    /**
+     * Parses a token string and separates it into the selector and validator.
+     *
+     * @param string $token The token string in the format `selector:validator`.
+     * @return array|null Returns an array with the selector and validator if the format is valid, otherwise null.
+     */
     private static function parseToken(string $token): ?array
     {
         $parts = explode(':', $token);
@@ -72,6 +89,14 @@ class Account
         return null;
     }
 
+    /**
+     * Generates a "remember me" token for the user, stores it in the database,
+     * and sets a cookie.
+     *
+     * @param int $uid The user's unique identifier.
+     * @param int $day The number of days the token should be valid for (default: 30).
+     * @return void
+     */
     private static function rememberMe(int $uid, int $day = 30)
     {
         global $sql;
@@ -100,6 +125,12 @@ class Account
         setcookie('remember_me', $token, $expiry);
     }
 
+    /**
+     * Removes all tokens associated with the given user ID from the database.
+     *
+     * @param int $uid The user's unique identifier.
+     * @return void
+     */
     private static function removeTokens(int $uid): void
     {
         global $sql;
@@ -123,6 +154,13 @@ class Account
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
+    /**
+     * Logs the user in by generating a token, updating the user's last login IP,
+     * and storing the token in the session.
+     *
+     * @param object $user The user object containing user information (e.g., email).
+     * @return void
+     */
     private static function userLogin(object $user): void
     {
         global $sql;
@@ -139,6 +177,13 @@ class Account
         unset($submit);
     }
 
+    /**
+     * Validates the user tokens by checking if they match the stored values in
+     * the database and are not expired.
+     *
+     * @param array $tokens The array containing the selector and validator tokens.
+     * @return bool Returns true if the tokens are valid and verified, otherwise false.
+     */
     private static function validateToken(array $tokens): bool
     {
         global $sql;
@@ -356,6 +401,12 @@ EOF;
         return self::generateString($fail, $list);
     }
 
+    /**
+     * Checks if the user is currently logged in, either through a session or a
+     * "remember me" cookie.
+     *
+     * @return bool Returns true if the user is logged in, false otherwise.
+     */
     public static function isUserLoggedIn(): bool
     {
         global $sql;
@@ -453,6 +504,13 @@ EOF;
         return self::generateString($fail, $list);
     }
 
+    /**
+     * Logs the user out by removing their tokens, destroying the "remember me"
+     * cookie, and destroying the session.
+     *
+     * @param Session $session The session object used to manage session operations.
+     * @return void
+     */
     public static function Logout(Session $session): void
     {
         if (self::isUserLoggedIn()) {

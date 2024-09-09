@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.0 2024/09/08 22:40:38 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.1 2024/09/09 01:37:25 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../.env');
 /**
  * Class Account
  *
- * This class handles the HTML output for the Hexforged account frontend.
+ * This class handles the HTML output for the Hexforged frontend accounting.
  */
 class Account
 {
@@ -79,6 +79,11 @@ class Account
 EOF;
     }
 
+    /**
+     * Generates the user account management HTML.
+     *
+     * @return string HTML code for <main/>.
+     */
     private static function manage(): string
     {
         $timestamp = new \DateTime();

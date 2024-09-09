@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: utils.php,v 1.0.0 2024/09/08 09:06:57 -0700 kyau Exp $
+ * $KYAULabs: utils.php,v 1.0.1 2024/09/09 01:51:27 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -31,7 +31,18 @@ namespace Hexforged;
 
 require_once(__DIR__ . '/../../.env');
 
+/**
+ * Class Utils
+ *
+ * Utility class providing helper functions.
+ */
 class Utils {
+    /**
+     * Logs a message to a specified log file.
+     *
+     * @param string $text The text message to be logged.
+     * @return bool Returns true on success or false on failure.
+     */
     public static function log(string $text): bool
     {
         return error_log($text, 3, __DIR__ . '/../hexforged.log');

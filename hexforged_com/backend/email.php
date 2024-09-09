@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: email.php,v 1.0.2 2024/09/09 00:29:41 -0700 kyau Exp $
+ * $KYAULabs: email.php,v 1.0.3 2024/09/09 01:35:22 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -33,6 +33,11 @@ require_once(__DIR__ . '/utils.php');
 
 use \InvalidArgumentException as InvalidArgumentException;
 
+/**
+ * Class Email
+ *
+ * This class handles sending automated emails.
+ */
 class Email
 {
     private const DEFAULT_EMAIL = 'app@hexforged.com';
@@ -112,6 +117,11 @@ class Email
         return $success;
     }
 
+    /**
+     * Sets static email headers for the message.
+     *
+     * @return void
+     */
     private function staticHeaders()
     {
         $this->headers = [
