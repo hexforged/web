@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: sessions.php,v 1.0.1 2024/09/07 11:42:30 -0700 kyau Exp $
+ * $KYAULabs: sessions.php,v 1.0.2 2024/09/09 01:50:26 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -233,6 +233,14 @@ class Session
         }
     }
 
+    /**
+     * Logs the user into the system by setting session variables with user
+     * details and a token.
+     *
+     * @param object $user The user object containing user information.
+     * @param string $token A unique token used for session identification.
+     * @return bool Returns true if the login is successful, otherwise false.
+     */
     public static function logUserIn(object $user, string $token): bool
     {
         if (!isset($user) || $token === '') return false;
