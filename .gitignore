@@ -15,6 +15,9 @@
 !.github/media/git-flow.svg
 !hexforged_com/cdn/images/logo@256x.png
 
+# Logs
+hexforged.log
+
 # Checksum files
 *.sha512
 

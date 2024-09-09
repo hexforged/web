@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.6 2024/07/31 11:09:23 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.7 2024/09/09 00:21:29 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -552,10 +552,11 @@ $(function () {
       $("main").is("#register") ||
       $("main").is("#login") ||
       $("main").is("#logout") ||
+      $("main").is("#manage") ||
       $("main").is("#verify") ||
       $("main").is("#dashboard")
     ) {
-      if ($("main").is("#dashboard")) {
+      if ($("main").is("#dashboard") || $("main").is("#manage")) {
         getData(manager, "header");
       } else {
         getData(manager, "header-medium");
@@ -580,6 +581,14 @@ $(function () {
     } else {
       getFormData(manager, $(this));
     }
+  });
+
+  // enter the realm
+  $(document).on("click", "#enter-the-realm", function (event) {
+    $("#enter-the-realm > span").html('<div class="loader"></div>');
+    setTimeout(function () {
+      location.href = "https://" + document.location.hostname + "/dashboard/";
+    }, 150);
   });
 
   // responsive input labels

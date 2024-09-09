@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: hexforged.php,v 1.0.7 2024/09/07 11:48:37 -0700 kyau Exp $
+ * $KYAULabs: hexforged.php,v 1.0.8 2024/09/09 00:22:36 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -30,224 +30,51 @@
 namespace Hexforged;
 
 require_once(__DIR__ . '/../../.env');
+// backend
 require_once(__DIR__ . '/../backend/account.php');
 require_once(__DIR__ . '/../backend/metadata.php');
 require_once(__DIR__ . '/../backend/sessions.php');
+// layouts
+require_once(__DIR__ . '/../layouts/account.php');
+require_once(__DIR__ . '/../layouts/dashboard.php');
+require_once(__DIR__ . '/../layouts/footer.php');
+require_once(__DIR__ . '/../layouts/frontpage.php');
+require_once(__DIR__ . '/../layouts/header.php');
 
 $session ??= new Session(true);
-
-/**
- * Class Output
- *
- * This class handles the HTML output for the Hexforged frontend.
- */
-class Output
-{
-    /**
-     * Generates the header HTML.
-     *
-     * @return string HTML code for <header/>.
-     */
-    public static function Header(string $size = ''): string
-    {
-        $image = '';
-        if ($size == 'large') {
-            $image = 'logo@512x';
-        } else if ($size == 'medium') {
-            $image = 'logo@256x';
-        } else {
-            $image = 'logo@128x';
-        }
-        $cdn = CDN_HOST;
-        $ret = <<<EOF
-        <a href="/"><img alt="" id="logo" src="//{$cdn}/images/{$image}.png" loading="eager" /></a>
-EOF;
-        if ($size === '') {
-            $user = ucwords($_SESSION['user']);
-            $ret .= <<<EOF
-        <div class="hex-dash__welcome">
-            <p>Welcome back, <span class="hex-color__h_cyan">{$user}!</span></p>
-            <p><a href="/account">manage</a> | <a href="/logout">logout</a></p>
-        </div>
-EOF;
-        }
-        return $ret;
-    }
-
-    /**
-     * Generates the footer HTML.
-     *
-     * @return string HTML code for <footer/>.
-     */
-    public static function Footer(): string
-    {
-        $gameTime = Metadata::getGameTime();
-        $version = Metadata::getVersion();
-        return <<<EOF
-        <p><a href="//discord.gg/DSvUNYm"><i class="fa-brands fa-discord"></i></a>
-        <a href="//github.com/hexforged"><i class="fa-brands fa-github"></i></a></p>
-        <p id="gametime">{$gameTime}</p>
-        <p>v{$version}</p>
-EOF;
-    }
-
-    /**
-     * Generates the main content HTML.
-     *
-     * @return string HTML code for <main/>.
-     */
-    public static function Main(): string
-    {
-        return <<<EOF
-        <p class="login-auth"><a href="/login">Login</a> <span>|</span> <a href="/register">Register</a></p>
-        <br/><br/>
-        <h5 class="hex-display__inline hex-align__center hex-color__red">Alpha Access Soon&trade;</h5>
-EOF;
-    }
-
-    /**
-     * Generates the registration HTML.
-     *
-     * @return string HTML code for <main/>.
-     */
-    public static function Register(): string
-    {
-        $googlePublic = GOOGLE_PUBLIC;
-        return <<<EOF
-        <br/>
-        <form action="" id="account-create" method="post">
-            <div class="hex-margin__top-one">
-                <h4><i class="fa-solid fa-user"></i> Register</h4>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__username" autocomplete="username" name="username" type="text" />
-                <label class="hex-input__label" for="hex-input__username">Account Name</label>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__email" autocomplete="email" name="email" type="text" />
-                <label class="hex-input__label" for="hex-input__email">Email</label>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwd" autocomplete="new-password" name="passwd" type="password" />
-                <label class="hex-input__label" for="hex-input__passwd">Password</label>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwdConfirm" autocomplete="new-password" name="passwdConfirm" type="password" />
-                <label class="hex-input__label" for="hex-input__passwdConfirm">Confirm Password</label>
-            </div>
-            <div id="recaptcha" class="g-recaptcha" data-sitekey="{$googlePublic}" data-theme="dark"></div>
-            <div class="hex-checkbox hex-margin__top-one">
-                <input class="hex-checkbox__input" id="hex-checkbox__acceptTerms" name="acceptTerms" value="1" type="checkbox" />
-                <label class="hex-checkbox__label" for="hex-checkbox__acceptTerms">I accept the <a href="/legal">Terms of Use and Privacy Notice</a>.</label>
-            </div>
-            <button type="submit" name="submit" id="submit" class="hex-btn__submit hex-margin__top-one">
-                <span>Create Account</span>
-            </button>
-            <div class="hex-margin__top-one">
-                Have an account? <a href="/login">Login instead</a>
-            </div>
-        </form>
-EOF;
-    }
-
-    /**
-     * Generates the registration HTML.
-     *
-     * @return string HTML code for <main/>.
-     */
-    public static function Login(): string
-    {
-        return <<<EOF
-        <br/>
-        <form action="" id="account-login" method="post">
-            <div class="hex-margin__top-one">
-                <h4><i class="fa-solid fa-key"></i> Login</h4>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__email" autocomplete="email" name="email" type="text" />
-                <label class="hex-input__label" for="hex-input__email">Email</label>
-            </div>
-            <div class="hex-input">
-                <input class="hex-input__input" id="hex-input__passwd" autocomplete="current-password" name="passwd" type="password" />
-                <label class="hex-input__label" for="hex-input__passwd">Password</label>
-            </div>
-            <div class="hex-checkbox">
-                <input class="hex-checkbox__input" id="hex-checkbox__remember" name="remember" value="1" type="checkbox" />
-                <label class="hex-checkbox__label" for="hex-checkbox__remember">Remember me</label>
-            </div>
-            <button type="submit" name="submit" id="submit" class="hex-btn__submit hex-margin__top-one">
-                <span>Sign in</span>
-            </button>
-            <div class="hex-margin__top-one">
-                No account? <a href="/register">Create one</a>
-            </div>
-EOF;
-    }
-
-    public static function Verify(): string
-    {
-        return <<<EOF
-        <form action="" id="account-verify" method="post">
-            <div class="hex-margin__top-one">
-                <h4><i class="fa-solid fa-user-check"></i> Activation</h4>
-            </div>
-            <input type="hidden" name="token" value="" />
-            <div class="hex-margin__top-one"><span class="token"></span></div>
-            <div class="hex-align__center hex-margin__top-one"><span class="loader"></span></div>
-        </form>
-EOF;
-    }
-}
-
-class Dashboard
-{
-    public static function Home(): string
-    {
-        $timestamp = new \DateTime();
-        $timestamp->setTimestamp($_SESSION['lastactivity']);
-        $lastActivity = date_format($timestamp, 'Y-m-d G:i:s');
-        return <<<EOF
-        <div class="hex-flex hex-align__left">
-            <p><strong>User:</strong> <span class="hex-color__cyan">#{$_SESSION['id']} - {$_SESSION['user']}</span></p>
-            <p><strong>Group ID:</strong> <span class="hex-color__cyan">{$_SESSION['gid']}</span></p>
-            <p><strong>Email:</strong> <span class="hex-color__cyan">{$_SESSION['email']}</span></p>
-            <p><strong>Last Login:</strong> <span class="hex-color__cyan">{$_SESSION['lastlogin']}</span></p>
-            <p><strong>Last IP:</strong> <span class="hex-color__cyan">{$_SESSION['lastip']}</span></p>
-            <p><strong>Last Activity:</strong> <span class="hex-color__cyan">{$lastActivity}</span></p>
-        </div>
-EOF;
-    }
-}
 
 if (isset($_POST['cmd']) && trim($_POST['cmd']) != '') {
     $cmd = strtolower(trim($_POST['cmd']));
     switch ($cmd) {
         case 'header':
-            echo Output::Header();
+            echo Layouts\Header::output('small');
             break;
         case 'header-medium':
-            echo Output::Header('medium');
+            echo Layouts\Header::output('medium');
             break;
         case 'header-large':
-            echo Output::Header('large');
+            echo Layouts\Header::output('large');
             break;
         case 'footer':
-            echo Output::Footer();
+            echo Layouts\Footer::output();
             break;
         case 'main':
-            echo Output::Main();
+            echo Layouts\Frontpage::output();
             break;
         case 'register':
-            echo Output::Register();
+            echo Layouts\Account::output('register');
             break;
         case 'login':
-            echo Output::Login();
+            echo Layouts\Account::output('login');
+            break;
+        case 'manage':
+            echo Layouts\Account::output('manage');
             break;
         case 'verify':
-            echo Output::Verify();
+            echo Layouts\Account::output('verify');
             break;
         case 'dashboard':
-            echo Dashboard::Home();
+            echo Layouts\Dashboard::output();
             break;
         default:
             break;
