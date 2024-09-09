@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.5 2024/09/05 02:23:53 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.6 2024/09/07 14:17:22 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -137,7 +137,7 @@ CREATE TABLE `users` (
 --
 
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` VALUES (1,0,'test','$2y$10$FB5LFmlguuElwdxZamhADO7wWUnHVvk6yFwvSjNdRjP/sk8443ySG','test@test.com',NULL,NULL,1,NOW(),NOW(),INET_ATON('0.0.0.0'),1,0);
+INSERT INTO `users` VALUES (1,0,'test','$2y$10$FB5LFmlguuElwdxZamhADO7wWUnHVvk6yFwvSjNdRjP/sk8443ySG','test@test.com',NULL,1,NOW(),NOW(),INET_ATON('0.0.0.0'),1,0);
 UNLOCK TABLES;
 
 --

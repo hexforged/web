@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: email.php,v 1.0.1 2024/07/17 04:31:02 -0700 kyau Exp $
+ * $KYAULabs: email.php,v 1.0.2 2024/09/09 00:29:41 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -28,6 +28,8 @@
  */
 
 namespace Hexforged;
+
+require_once(__DIR__ . '/utils.php');
 
 use \InvalidArgumentException as InvalidArgumentException;
 
@@ -104,7 +106,7 @@ class Email
         $success = mail($this->to, $this->subject, $this->msg, $this->headers);
 
         if (!$success) {
-            error_log("Email <ERROR> Failed to send email to {$this->to}");
+            Utils::log("Email <ERROR> Failed to send email to {$this->to}");
         }
 
         return $success;
