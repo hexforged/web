@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: footer.php,v 1.0.0 2024/09/08 11:35:51 -0700 kyau Exp $
+ * $KYAULabs: footer.php,v 1.0.1 2024/10/07 19:58:12 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -51,7 +51,7 @@ class Footer
         $gameTime = Metadata::getGameTime();
         $version = Metadata::getVersion();
         return <<<EOF
-        <p><a href="//discord.gg/DSvUNYm"><i class="fa-brands fa-discord"></i></a>
+        <p><a href="//discord.gg/3NCUxW3wE4"><i class="fa-brands fa-discord"></i></a>
         <a href="//github.com/hexforged"><i class="fa-brands fa-github"></i></a></p>
         <p id="gametime">{$gameTime}</p>
         <p>v{$version}</p>

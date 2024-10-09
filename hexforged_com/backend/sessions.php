@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: sessions.php,v 1.0.2 2024/09/09 01:50:26 -0700 kyau Exp $
+ * $KYAULabs: sessions.php,v 1.0.3 2024/10/08 22:47:02 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -168,6 +168,8 @@ class Session
         ini_set('session.save_handler', 'files');
         self::$handler = new EncryptedSessionHandler(self::$key);
         session_set_save_handler(self::$handler, true);
+        // rename session variable
+        @session_name('hex_session');
         // start session
         @session_start([
             'cookie_domain' => $_SERVER['HTTP_HOST'],

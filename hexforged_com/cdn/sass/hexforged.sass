@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.0.9 2024/09/09 00:22:09 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.1.0 2024/10/08 22:50:53 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,6 +26,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@import url('https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css')
+@import url('https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-solid.css')
+@import url('https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-regular.css')
+@import url('https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-duotone-solid.css')
+
 $bg: rgb(19, 20, 23)
 $bg-footer: rgb(9, 10, 11)
 $bg-panel: rgba(0, 0, 0, 0.5)
@@ -42,6 +47,9 @@ $screen-small: 576px
 $screen-medium: 768px
 $screen-large: 992px
 $screen-xlarge: 1200px
+
+$margin-small: 128px
+$margin-medium: 180px
 
 
 /**
@@ -190,7 +198,7 @@ header
   font-family: $fontstack-heading
   position: fixed
   top: 0
-  height: 128px
+  height: $margin-small
   z-index: 1
 
   a ,a:link, a:active, a:visited
@@ -210,7 +218,7 @@ header
     text-align: center
 
   &#header-medium
-    height: 180px
+    height: $margin-medium
 
     #logo
       margin-left: -128px
@@ -244,7 +252,7 @@ header
  */
 main
   overflow-y: auto
-  padding-bottom: 2rem
+  //padding-bottom: 2rem
   width: 100%
   text-align: center
   z-index: 2
@@ -258,10 +266,67 @@ main
     margin-top: calc(135px + 350px)
     height: calc(100% - 4rem - 135px - 350px)
 
-  &#dashboard, &#manage
+  #console
+    display: none
+    position: fixed
+    left: 1em
+    top: 1em
+    text-align: left
+    transition: width, 0.5s linear
+    width: 0
+    background-color: $bg-panel
+    border-radius: 0.5rem
+    box-shadow: 0 4px 30px $bg-panel-shadow
+    margin: 0 auto
+    padding: 1rem
+
+    &.shown
+      width: 22em
+
+  #console > div > h5
+      position: relative
+      left: -2px
+      white-space: nowrap
+
+  #log
+    font-family: $fontstack-mono
+    @include font-size(11pt)
+    text-shadow: none
+    align-items: start
+    display: flex
+    flex-direction: column
+    height: calc(100vh - 12rem)
+    margin-top: 1rem
+    overflow-y: scroll
+    overflow-x: hidden
+    scrollbar-width: none
+    -ms-overflow-style: none
+
+    &::-webkit-scrollbar
+      background: transparent
+      width: 0
+
+    span
+      white-space: nowrap
+
+  &#dashboard, &#game, &#manage
     font-family: $fontstack
-    margin-top: 128px
-    height: calc(100% - 4rem - 128px)
+    margin-top: $margin-small
+    //height: calc(100% - 4rem - 128px)
+    height: calc(100vh - 4rem - #{$margin-small})
+    max-height: calc(100vh - 4rem - #{$margin-small})
+
+    #canvas
+      display: inline-block
+      position: absolute
+      //height: 576px
+      height: Min(576px, calc(100% - 200px - #{$margin-small} - 4rem))
+      width: Min(1024px, calc(100vw - 54em))
+
+    #hexforged
+      border-radius: 0.75em
+      box-shadow: 0 4px 30px $bg-panel-shadow
+      position: relative
   
   &#login, &#logout, &#register, &#verify
     font-family: $fontstack-heading

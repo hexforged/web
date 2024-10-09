@@ -1,7 +1,6 @@
-<?php
-
 /**
- * $KYAULabs: index.php,v 1.0.5 2024/10/07 17:03:32 -0700 kyau Exp $
+ *
+ * $KYAULabs: hexloop.js,v 1.0.0 2024/10/08 23:43:36 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,38 +25,3 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-$rus = getrusage();
-require_once(__DIR__ . '/../../.env');
-require_once(__DIR__ . '/../../aurora/aurora.inc.php');
-require_once(__DIR__ . '/../backend/sessions.php');
-
-$session ??= new Hexforged\Session(true);
-$hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
-$hexforged->title = 'Hexforged: Realms Unleashed';
-$hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
-$hexforged->dns = [CDN_HOST];
-$hexforged->preload = [
-    '/css/hexforged.min.css' => 'style',
-    '/javascript/jquery.module.min.js' => 'script',
-    '/fonts/Agave-Regular.ttf' => 'font',
-    '/fonts/Agave-Bold.ttf' => 'font',
-    '/fonts/SavaPro-Light.otf' => 'font',
-    '/fonts/SavaPro-Regular.otf' => 'font',
-    '/fonts/SavaPro-Medium.otf' => 'font',
-    '/fonts/SavaPro-Semibold.otf' => 'font',
-    '/fonts/SavaPro-Bold.otf' => 'font',
-    '/fonts/SavaPro-Black.otf' => 'font',
-];
-$hexforged->css = [
-    '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
-];
-$hexforged->mjs = [
-    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
-];
-$hexforged->htmlHeader();
-// <content>
-echo "\t<header id=\"header-large\"></header>\n\t<main><div id=\"console\"><div><h5><i class=\"fa-solid fa-rectangle-terminal fa-fw\"></i> Console</h5><div id=\"log\"></diV></div></div></main>\n\t<footer></footer>\n";
-// </content>
-$hexforged->htmlFooter();
-echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);

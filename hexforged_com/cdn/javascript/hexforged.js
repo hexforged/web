@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.7 2024/09/09 00:21:29 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.8 2024/10/08 22:47:42 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,517 +26,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * Delay constant in milliseconds.
- * @constant {number}
- */
-const DELAY = 50;
+import { $, jQuery } from './jquery.module.min.js';
+import { Ajax } from './ajax.js';
 
-/**
- * Array of game day names.
- * @constant {string[]}
- */
-const GAME_DAY = new Array(
-  "Moonday",
-  "Fireday",
-  "Earthday",
-  "Lightday",
-  "Iceday",
-  "Waterday",
-  "Cosmicday"
-);
-
-/**
- * Array of game month abbreviations.
- * @constant {string[]}
- */
-const GAME_MONTH = new Array(
-  "",
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec"
-);
-
-/**
- * Milliseconds in a real day.
- * @constant {number}
- */
-const msRealDay = 24 * 60 * 60 * 1000;
-
-/**
- * Basis date used for calculations.
- * @type {Date}
- */
-let basisDate = new Date();
-
-/**
- * CDN Hostname
- * @type {string}
- */
-let cdnHost = "";
-
-/**
- * Stores the last date and time string.
- * @type {string}
- */
-let lastDateTime = "";
-
-/**
- * Stores the last icon URL.
- * @type {string}
- */
-let lastIcon = "";
-
-/**
- * Stores the last submit button.
- * @type {string}
- */
-let lastSubmit = "";
-
-/**
- * Recaptcha instance.
- * @type {Object|null}
- */
-let recaptcha = null;
-
-/**
- * Logs a message to the console with a specific section and color.
- *
- * @param {string} message - The message to log.
- * @param {string} section - The section name.
- * @param {string} [color] - The color of the message.
- */
-function log(message, section, color) {
-  if (!color) {
-    color = "inherit";
-  } else {
-    color = "color: " + color + ";";
-  }
-  console.log("%cHexforged <" + section + "> " + message, color);
-}
-
-/**
- * Sends an AJAX request to get data from the server.
- *
- * @param {string} url - The URL to send the request to.
- * @param {string} keyword - The command to send with the request.
- */
-function getData(url, keyword) {
-  let req = $.ajax({
-    url: "/" + url + ".php",
-    method: "POST",
-    data: { cmd: keyword },
-    dataType: "html",
-    beforeSend: function (xhr) {
-      log("Requesting: " + keyword, "DATA");
-    },
-  });
-  req.fail(function (xhr, textStatus, errorThrown) {
-    if (!errorThrown) {
-      log("Unknown", "ERROR");
-    } else {
-      log(textStatus + " - " + errorThrown, "ERROR", "darkred");
-    }
-  });
-  req.done(function (data, textStatus, xhr) {
-    if (data.length > 0) {
-      log("Response Received: " + keyword + " (" + data.length + ")", "DATA");
-      processData(keyword, data);
-    } else {
-      log(
-        "Empty/Null response received from " + keyword + ".",
-        "WARNING",
-        "#9aa0a6"
-      );
-    }
-  });
-}
-
-/**
- * Sends form data to a specified URL via an AJAX POST request.
- * Logs the process and handles the response.
- *
- * @param {string} url - The URL endpoint to which the form data should be sent (without the .php extension).
- * @param {Object} form - The jQuery form object to be serialized and sent.
- */
-function getFormData(url, form) {
-  let id = form.attr("id");
-  let data = form.serialize();
-  let addData = { form: id };
-  data += "&" + $.param(addData);
-  let req = $.ajax({
-    url: "/" + url + ".php",
-    type: "POST",
-    data: data,
-    beforeSend: function (xhr) {
-      log("Submitting: <form#" + id + "/>", "DATA");
-    },
-  });
-  req.fail(function (xhr, textStatus, errorThrown) {
-    if (!errorThrown) {
-      log("Unknown", "ERROR");
-    } else {
-      log(textStatus + " - " + errorThrown, "ERROR", "darkred");
-    }
-  });
-  req.done(function (data, textStatus, xhr) {
-    if (data.length > 0) {
-      log(
-        "Response Received: <form#" + id + "/> (" + data.length + ")",
-        "DATA"
-      );
-      processFormData(id, data);
-    } else {
-      log(
-        "Empty/Null response received from <form#" + id + "/>.",
-        "WARNING",
-        "#9aa0a6"
-      );
-    }
-  });
-}
-
-/**
- * Processes the received data based on the keyword.
- *
- * @param {string} keyword - The command associated with the data.
- * @param {string} data - The received data.
- */
-function processData(keyword, data) {
-  setTimeout(function () {
-    log("Processing: " + keyword + " (" + data.length + ")", "DATA", "green");
-    if (keyword === "main") {
-      $("main").html(data);
-    } else if (keyword === "footer") {
-      $("footer").append(data);
-      // basis date is used to convert real time to game time
-      let dataTime = $("#gametime > span").data("start");
-      let gTime = dataTime.split("-");
-      gTime = gTime.map((x) => parseInt(x));
-      basisDate.setUTCFullYear(gTime[0], gTime[1] - 1, gTime[2]);
-      basisDate.setUTCHours(gTime[3], gTime[4], gTime[5], 0);
-      // set current dayIcon
-      setTimeout(function () {
-        lastIcon = $("img#gameTimeIcon").attr("src");
-        let url = new URL("https:" + lastIcon);
-        cdnHost = url.hostname;
-        // begin gametime loop
-        setInterval(() => getGameTime(), 250);
-      }, DELAY);
-    } else if (keyword.substr(0, 6) === "header") {
-      $("header").html(data);
-    } else if (keyword === "verify") {
-      $("#" + keyword).html(data);
-      $("#account-verify > input[type=hidden]").val($("#verify").data("token"));
-      $("#account-verify > div > span.token").html($("#verify").data("token"));
-      setTimeout(() => $("#account-verify").submit(), 500);
-    } else {
-      $("#" + keyword).html(data);
-      // render recaptcha if found
-      if ($("#recaptcha").length) {
-        if (typeof grecaptcha !== "undefined") {
-          recaptcha = grecaptcha.render("recaptcha", {
-            sitekey: $("#recaptcha").data("sitekey"),
-          });
-        }
-      }
-    }
-  }, DELAY);
-}
-
-function processFormData(id, data) {
-  log("Processing: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
-  if ($("#recaptcha").length) {
-    let response = grecaptcha.getResponse();
-    if (response.length === 0) {
-      $("#recaptcha").after(
-        '<span class="hex-form__fail hex-color__red">Complete the recaptcha challenge.</span>'
-      );
-    }
-  }
-  //$("main").append(data);
-  let sections = data.split("=");
-  if (id === "account-create") {
-    if (sections[0] === "fail") {
-      // account-create: fail
-      if (sections[1].length > 0) {
-        let fail = sections[1].split(":");
-        fail_loop: for (let i = 0; i < fail.length; i++) {
-          switch (fail[i]) {
-            case "account-add":
-              $("form > .hex-margin__top-one:nth-child(1)").after(
-                '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
-              );
-              break fail_loop;
-            case "email-check":
-              $("form > .hex-margin__top-one:nth-child(1)").after(
-                '<span class="hex-form__fail hex-color__red">Email address already in use!</span>'
-              );
-              break fail_loop;
-            case "username-check":
-              $("form > .hex-margin__top-one:nth-child(1)").after(
-                '<span class="hex-form__fail hex-color__red">Account name already in use!</span>'
-              );
-              break fail_loop;
-            case "empty-username":
-              $("#hex-input__username")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Account name is required.</span>'
-                );
-              break;
-            case "empty-email":
-              $("#hex-input__email")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
-                );
-              break;
-            case "empty-passwd":
-              $("#hex-input__passwd")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
-                );
-              break;
-            case "empty-passwdConfirm":
-              $("#hex-input__passwdConfirm")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
-                );
-              break;
-            case "username-validate":
-              $("#hex-input__username")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Name can only contain letters and whitespace.</span>'
-                );
-              break;
-            case "email-validate":
-              $("#hex-input__email")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
-                );
-              break;
-            case "passwd-validate":
-              $("#hex-input__passwd")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Password must be 8-32 characters and contain one uppercase, lowercase, number and special character.</span>'
-                );
-              break;
-            case "passwd-match":
-              $("#hex-input__passwdConfirm")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Passwords do not match.</span>'
-                );
-              break;
-            case "accept-terms":
-              $("#hex-checkbox__acceptTerms")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">You must accept the Terms of Service.</span>'
-                );
-            default:
-              break;
-          }
-        }
-        $("#submit > span").html(lastSubmit);
-        log(
-          "Failed: <form#" + id + "/> (" + data.length + ")",
-          "ERROR",
-          "darkred"
-        );
-      }
-    } else if (sections[0] === "success") {
-      // account-create: success
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__success hex-color__green">Activation email has been sent!</span>'
-      );
-      $("#recaptcha").html("");
-      $("#submit > span").html(
-        '<i class="fa-solid fa-check hex-color__green"></i>'
-      );
-      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
-    } else {
-      // account-create: fail
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__fail hex-color__red">Failed to create account!</span>'
-      );
-      $("#submit > span").html(lastSubmit);
-      log(
-        "Failed: <form#" + id + "/> (" + data.length + ")",
-        "ERROR",
-        "darkred"
-      );
-    }
-  } else if (id === "account-verify") {
-    //$("main").append(data);
-    if (sections[0] === "fail") {
-      // account-verify: fail
-      if (sections[1].length > 0) {
-        let fail = sections[1].split(":");
-        fail_loop: for (let i = 0; i < fail.length; i++) {
-          switch (fail[i]) {
-            case "activated-check":
-              $("form > .hex-margin__top-one:nth-child(1)").after(
-                '<span class="hex-form__fail hex-color__red">Account is already active!</span>'
-              );
-              break fail_loop;
-            case "token-check":
-              $("form > .hex-margin__top-one:nth-child(1)").after(
-                '<span class="hex-form__fail hex-color__red">Token is invalid!</span>'
-              );
-              break fail_loop;
-            default:
-              break;
-          }
-        }
-        $("#account-verify > div > span.loader").remove();
-        log(
-          "Failed: <form#" + id + "/> (" + data.length + ")",
-          "ERROR",
-          "darkred"
-        );
-      }
-    } else if (sections[0] === "success") {
-      // account-verify: success
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__success hex-color__green">Account \'' +
-          sections[1] +
-          "' has been activated!</span>"
-      );
-      icon = $("#account-verify > div > span.loader").parent();
-      $("#account-verify").attr("id", "redirect");
-      $(icon).html(
-        '<button type="submit" name="submit" id="submit" class="hex-btn__submit hex-margin__top-one" data-url="/login"><span>Sign in</span></button>'
-      );
-      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
-    } else {
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__fail hex-color__red">Token is invalid!</span>'
-      );
-      $("#account-verify > div > span.loader").remove();
-      log(
-        "Failed: <form#" + id + "/> (" + data.length + ")",
-        "ERROR",
-        "darkred"
-      );
-    }
-  } else if (id === "account-login") {
-    if (sections[0] === "fail") {
-      // account-login: fail
-      if (sections[1].length > 0) {
-        let fail = sections[1].split(":");
-        fail_loop: for (let i = 0; i < fail.length; i++) {
-          switch (fail[i]) {
-            case "email-check":
-              $("#hex-input__email")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Email address is invalid.</span>'
-                );
-              break fail_loop;
-            case "empty-email":
-              $("#hex-input__email")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Email address is required.</span>'
-                );
-              break;
-            case "empty-passwd":
-              $("#hex-input__passwd")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Password is required.</span>'
-                );
-              break;
-            case "passwd-check":
-              $("#hex-input__passwd")
-                .parent()
-                .after(
-                  '<span class="hex-form__fail hex-color__red">Password is invalid.</span>'
-                );
-              break;
-            default:
-              break;
-          }
-        }
-      }
-      log(
-        "Failed: <form#" + id + "/> (" + data.length + ")",
-        "ERROR",
-        "darkred"
-      );
-      $("#submit > span").html(lastSubmit);
-    } else if (sections[0] === "success") {
-      // account-login: success
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__success hex-color__green">Login successful!</span>'
-      );
-      log("Success: <form#" + id + "/> (" + data.length + ")", "FORM", "green");
-      setTimeout(function () {
-        location.href = "https://" + document.location.hostname + "/dashboard/";
-      }, 150);
-    } else {
-      $("form > .hex-margin__top-one:nth-child(1)").after(
-        '<span class="hex-form__fail hex-color__red">Login failed!</span>'
-      );
-      log(
-        "Failed: <form#" + id + "/> (" + data.length + ")",
-        "ERROR",
-        "darkred"
-      );
-      $("#submit > span").html(lastSubmit);
-    }
-  } else {
-    log("Failed: <form#" + id + "/> (" + data.length + ")", "ERROR", "darkred");
-  }
-}
-
-/**
- * Updates the game time based on the real time.
- */
-function getGameTime() {
-  let now = new Date();
-
-  let gameDate = 360 * msRealDay + (now.getTime() - basisDate.getTime()) * 25;
-
-  let vYear = Math.floor(gameDate / (360 * msRealDay));
-  let vMon = Math.floor((gameDate % (360 * msRealDay)) / (30 * msRealDay)) + 1;
-  let vDate = Math.floor((gameDate % (30 * msRealDay)) / msRealDay) + 1;
-  let vHour = Math.floor((gameDate % msRealDay) / (60 * 60 * 1000));
-  let vMin = Math.floor((gameDate % (60 * 60 * 1000)) / (60 * 1000));
-  let vSec = Math.floor((gameDate % (60 * 1000)) / 1000);
-  let vDay = Math.floor((gameDate % (7 * msRealDay)) / msRealDay);
-
-  let vHourP = String(vHour).padStart(2, "0");
-  let vMinP = String(vMin).padStart(2, "0");
-
-  newDateTime = `${GAME_DAY[vDay]}, ${GAME_MONTH[vMon]} ${vDate} ${vYear}CE &mdash; ${vHourP}:${vMinP}`;
-  newIcon = "//" + cdnHost + "/images/elements/" + GAME_DAY[vDay] + "@16x.png";
-
-  if (lastDateTime != newDateTime) {
-    if (lastIcon != newIcon) {
-      $("#gametime > #gameTimeIcon").attr("src", newIcon);
-      lastIcon = newIcon;
-    }
-    $("#gametime > span").html(newDateTime);
-    lastDateTime = newDateTime;
-  }
-}
+const ajax = new Ajax('hexforged');
 
 /**
  * Initializes the document ready functions.
@@ -557,29 +50,46 @@ $(function () {
       $("main").is("#dashboard")
     ) {
       if ($("main").is("#dashboard") || $("main").is("#manage")) {
-        getData(manager, "header");
+        ajax.post('header');
       } else {
-        getData(manager, "header-medium");
+        ajax.post('header-medium');
       }
-      getData(manager, $("main").attr("id"));
+      ajax.post($("main").attr("id"));
     } else {
-      getData(manager, "header-large");
-      getData(manager, "main");
+      ajax.post('header-large');
+      ajax.post('main');
     }
   }
-  getData(manager, "footer");
+  ajax.post('footer');
+
+  // toggle console
+  $(document).on('keyup', function (event) {
+    if (event.which == 192) {
+      if ($('#console').is(":visible")) {
+        $('#console').toggleClass('shown');
+        setTimeout(function () {
+          $('#console').toggle();
+        }, 525);
+      } else {
+        $('#console').toggle();
+        setTimeout(function () {
+          $('#console').toggleClass('shown');
+        }, 50);
+      }
+    }
+  });
 
   // form submission
   $(document).on("submit", "form", function (event) {
     event.preventDefault();
-    lastSubmit = $("#submit > span").html();
+    Ajax.lastSubmit = $("#submit > span").html();
     $("#submit > span").html('<div class="loader"></div>');
     $(".hex-form__fail").remove();
     if ($("form").attr("id") === "redirect") {
       location.href =
         "https://" + document.location.hostname + $("#submit").data("url");
     } else {
-      getFormData(manager, $(this));
+      ajax.postForm($('form'));
     }
   });
 

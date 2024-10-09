@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: logout.php,v 1.0.4 2024/09/06 11:08:38 -0700 kyau Exp $
+ * $KYAULabs: logout.php,v 1.0.5 2024/10/07 17:07:33 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -47,7 +47,7 @@ $hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
 $hexforged->dns = [CDN_HOST];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
-    '/javascript/jquery.min.js' => 'script',
+    '/javascript/jquery.module.min.js' => 'script',
     '/fonts/Agave-Regular.ttf' => 'font',
     '/fonts/Agave-Bold.ttf' => 'font',
     '/fonts/SavaPro-Light.otf' => 'font',
@@ -58,18 +58,17 @@ $hexforged->preload = [
     '/fonts/SavaPro-Black.otf' => 'font',
 ];
 $hexforged->css = [
-    '../cdn/css/fontawesome.min.css' => '//' . CDN_HOST . '/css/fontawesome.min.css',
-    '../cdn/css/all.min.css' => '//' . CDN_HOST . '/css/all.min.css',
     '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
 ];
 $hexforged->js = [
-    '../cdn/javascript/jquery.min.js' => '//' . CDN_HOST . '/javascript/jquery.min.js',
-    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
     '<external>' => '//www.google.com/recaptcha/api.js',
+];
+$hexforged->mjs = [
+    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
 ];
 $hexforged->htmlHeader();
 // <content>
-echo "\t<header id=\"header-medium\"></header>\n\t<main id=\"logout\">{$user} has been logged out.</main>\n\t<footer></footer>\n";
+echo "\t<header id=\"header-medium\"></header>\n\t<main id=\"logout\"><div id=\"console\"><div><h5><i class=\"fa-solid fa-rectangle-terminal fa-fw\"></i> Console</h5><div id=\"log\"></diV></div></div>{$user} has been logged out.</main>\n\t<footer></footer>\n";
 // </content>
 $hexforged->htmlFooter();
 echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);
