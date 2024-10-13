@@ -23,6 +23,7 @@ hexforged.log
 
 # Compressed files
 *.min.js
+*.min.mjs
 *.min.css
 
 # Source maps

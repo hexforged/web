@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: dashboard.php,v 1.0.0 2024/09/08 22:05:40 -0700 kyau Exp $
+ * $KYAULabs: dashboard.php,v 1.0.1 2024/10/11 22:23:10 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -46,9 +46,8 @@ class Dashboard
     public static function output(): string
     {
         return <<<EOF
-        <div class="hex-flex hex-align__center">
-        Game testing soon.
-        </div>
+        <div id="canvas"></div>
+        <canvas id="hexforged"></canvas>
 EOF;
     }
 }

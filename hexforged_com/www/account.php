@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.1 2024/10/07 17:11:03 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.2 2024/10/11 22:23:39 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -47,16 +47,10 @@ $hexforged->dns = [CDN_HOST];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
     '/javascript/jquery.module.min.js' => 'script',
-    '/fonts/Agave-Regular.ttf' => 'font',
-    '/fonts/Agave-Bold.ttf' => 'font',
-    '/fonts/SavaPro-Light.otf' => 'font',
-    '/fonts/SavaPro-Regular.otf' => 'font',
-    '/fonts/SavaPro-Medium.otf' => 'font',
-    '/fonts/SavaPro-Semibold.otf' => 'font',
-    '/fonts/SavaPro-Bold.otf' => 'font',
-    '/fonts/SavaPro-Black.otf' => 'font',
+    '/javascript/hexforged.min.js' => 'script',
 ];
 $hexforged->css = [
+    '../cdn/css/fonts.min.css' => '//' . CDN_HOST . '/css/fonts.min.css',
     '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
 ];
 $hexforged->mjs = [

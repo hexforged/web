@@ -1,7 +1,6 @@
-<?php
-
 /**
- * $KYAULabs: login.php,v 1.0.6 2024/10/11 22:24:24 -0700 kyau Exp $
+ *
+ * $KYAULabs: point.mjs,v 1.0.0 2024/10/09 13:48:08 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,40 +26,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-$rus = getrusage();
-require_once(__DIR__ . '/../../.env');
-require_once(__DIR__ . '/../../aurora/aurora.inc.php');
-require_once(__DIR__ . '/../backend/account.php');
-require_once(__DIR__ . '/../backend/sessions.php');
+import { Hex } from './hex.min.mjs';
 
-$session ??= new Hexforged\Session(true);
-if (Hexforged\Account::isUserLoggedIn()) {
-    header('Location: /dashboard');
-    exit(0);
+/**
+ * The square root of 3, computed once and used twice.
+ * @constant {number}
+ */
+const SQRT3 = Math.sqrt(3);
+
+/**
+ * Class representing a coordinate on the canvas.
+ */
+class Point {
+  /**
+   * Creates an instance of Point.
+   * @param {number} x - The x coordinate.
+   * @param {number} y - The y coordinate.
+   */
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  /**
+   * Converts pixel coordinates to a pointy hexagonal grid system.
+   * @param {number} hex_radius - The hexagon drawing radius.
+   * @returns {Hex} The corresponding hexagonal coordinates.
+   */
+  to_cube(radius) {
+    const q = (SQRT3 / 3 * this.x - 1./3 * this.y) / radius;
+    const r = (2./3 * this.y) / radius;
+    return new Hex(q, r, -q-r).round();
+  }
 }
-$hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
-$hexforged->sessions = true;
-$hexforged->title = 'Hexforged: Login';
-$hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
-$hexforged->dns = [CDN_HOST];
-$hexforged->preload = [
-    '/css/hexforged.min.css' => 'style',
-    '/javascript/jquery.module.min.js' => 'script',
-    '/javascript/hexforged.min.js' => 'script',
-];
-$hexforged->css = [
-    '../cdn/css/fonts.min.css' => '//' . CDN_HOST . '/css/fonts.min.css',
-    '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
-];
-$hexforged->js = [
-    '<external>' => '//www.google.com/recaptcha/api.js',
-];
-$hexforged->mjs = [
-    '../cdn/javascript/hexforged.min.js' => '//' . CDN_HOST . '/javascript/hexforged.min.js',
-];
-$hexforged->htmlHeader();
-// <content>
-echo "\t<header id=\"header-medium\"></header>\n\t<main id=\"login\"><div id=\"console\"><div><h5><i class=\"fa-solid fa-rectangle-terminal fa-fw\"></i> Console</h5><div id=\"log\"></diV></div></div></main>\n\t<footer></footer>\n";
-// </content>
-$hexforged->htmlFooter();
-echo $hexforged->comment($rus, $_SERVER['SCRIPT_FILENAME'], true);
+
+export { Point };
+export default Point;

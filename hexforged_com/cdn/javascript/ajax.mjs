@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: ajax.js,v 1.0.0 2024/10/07 20:58:06 -0700 kyau Exp $
+ * $KYAULabs: ajax.mjs,v 1.0.0 2024/10/07 20:58:06 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,14 +27,16 @@
  */
 
 import { $ } from './jquery.module.min.js';
-import { Log } from './logger.js';
-import { Clock } from './clock.js';
+import { Log } from './logger.min.mjs';
+import { Clock } from './clock.min.mjs';
 
 class Ajax {
   constructor(url) {
     this.url = url;
     this.delay = 50;
+    this.verifyDelay = 500;
     Ajax.lastSubmit = '';
+    Ajax.loginDelay = 150;
   }
 
   static accountCreate(id, sections, dataLength) {
@@ -198,7 +200,7 @@ class Ajax {
       Log.success(`Success: form#${id} (${dataLength})`);
       setTimeout(function () {
         location.href = "https://" + document.location.hostname + "/dashboard/";
-      }, 150);
+      }, Ajax.loginDelay);
       return true;
     } else {
       $("form > .hex-margin__top-one:nth-child(1)").after(
@@ -259,7 +261,7 @@ class Ajax {
   }
 
   static processData(keyword, data) {
-    setTimeout(function () {
+    //setTimeout(function () {
       Log.success(`Processing: ${keyword} (${data.length})`);
       if (keyword === "main") {
         $("main").append(data);
@@ -277,7 +279,7 @@ class Ajax {
         $("#" + keyword).html(data);
         $("#account-verify > input[type=hidden]").val($("#verify").data("token"));
         $("#account-verify > div > span.token").html($("#verify").data("token"));
-        setTimeout(() => $("#account-verify").submit(), 500);
+        setTimeout(() => $("#account-verify").submit(), this.verifyDelay);
       } else {
         $("#" + keyword).append(data);
         // render recaptcha if found
@@ -289,7 +291,7 @@ class Ajax {
           }
         }
       }
-    }, this.delay);
+    //}, this.delay);
   }
 
   static processFormData(id, data) {

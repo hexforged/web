@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: account.php,v 1.0.5 2024/09/09 01:48:36 -0700 kyau Exp $
+ * $KYAULabs: account.php,v 1.0.6 2024/10/13 13:23:27 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -165,6 +165,7 @@ class Account
     {
         global $sql;
         $token = self::uuidv4();
+        $expiry = time() + 60 * 60 * 24 * 30; // 30 days
         Session::logUserIn($user, $token);
 
         // update user database (lastlogin / lastip)
@@ -175,6 +176,14 @@ class Account
         ];
         $sql->query('UPDATE `users` SET `lastip` = INET_ATON(:lastip), `lastlogin` = NOW(), `token` = UUID_TO_BIN(:token) WHERE `email` = :email', $submit);
         unset($submit);
+        setcookie('hex_token', $token, [
+            'expires' => $expiry,
+            'path' => '/',
+            'domain' => $_SERVER['SERVER_NAME'],
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
     }
 
     /**
@@ -521,6 +530,10 @@ EOF;
             if (isset($_COOKIE['remember_me'])) {
                 unset($_COOKIE['remember_me']);
                 setcookie('remember_me', '', time() - 3600, '/');
+            }
+            if (isset($_COOKIE['hex_token'])) {
+                unset($_COOKIE['hex_token']);
+                setcookie('hex_token', '', time() - 3600, '/', $_SERVER['SERVER_NAME'], true, true);
             }
 
             // destroy the session and session data

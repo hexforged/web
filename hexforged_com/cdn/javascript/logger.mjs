@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: logger.js,v 1.0.0 2024/10/07 22:45:55 -0700 kyau Exp $
+ * $KYAULabs: logger.mjs,v 1.0.0 2024/10/07 22:45:55 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,7 +26,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Color } from './color.js';
+import { Color } from './color.min.mjs';
 
 /**
  * Class representing the console logger.
@@ -41,7 +41,7 @@ class Log {
    * Scrolls the <div> element to the bottom.
    */
   static scroll() {
-    this.console.lastChild.scrollIntoView({ behavior: "smooth" });
+    Log.console.lastChild.scrollIntoView({ behavior: "smooth" });
   }
 
   /**
@@ -49,11 +49,19 @@ class Log {
    * @param {string} text - The message to log.
    */
   static info(text) {
-    this.console.insertAdjacentHTML(
+    Log.console.insertAdjacentHTML(
       "beforeend",
       `<span style="color:${Color.logger.default.string}"><i class="fa-duotone fa-solid fa-square-info"></i> ${text}</span>`
     );
-    this.scroll();
+    Log.scroll();
+  }
+
+  static warn(text) {
+    Log.console.insertAdjacentHTML(
+      'beforeend',
+      `<span style="color:${Color.logger.default.string}"><i class="fa-duotone fa-solid fa-square-question"></i> ${text}</span>`
+    );
+    Log.scroll();
   }
 
   /**
@@ -61,11 +69,11 @@ class Log {
    * @param {string} text - The error message to log.
    */
   static error(text) {
-    this.console.insertAdjacentHTML(
+    Log.console.insertAdjacentHTML(
       "beforeend",
       `<span style="color:${Color.logger.error.string}"><i class="fa-duotone fa-solid fa-square-xmark"></i> ${text}</span>`
     );
-    this.scroll();
+    Log.scroll();
   }
 
   /**
@@ -73,11 +81,11 @@ class Log {
    * @param {string} text - The success message to log.
    */
   static success(text) {
-    this.console.insertAdjacentHTML(
+    Log.console.insertAdjacentHTML(
       "beforeend",
       `<span style="color:${Color.logger.success.string}"><i class="fa-duotone fa-solid fa-square-check"></i> ${text}</span>`
     );
-    this.scroll();
+    Log.scroll();
   }
 
   /**
@@ -86,11 +94,11 @@ class Log {
    * @param {string} text - The custom message to log.
    */
   static custom(color, text) {
-    this.console.insertAdjacentHTML(
+    Log.console.insertAdjacentHTML(
       "beforeend",
       `<span style="color:${color}"><i class="fa-solid fa-square"></i> ${text}</span>`
     );
-    this.scroll();
+    Log.scroll();
   }
 }
 

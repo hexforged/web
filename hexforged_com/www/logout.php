@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: logout.php,v 1.0.5 2024/10/07 17:07:33 -0700 kyau Exp $
+ * $KYAULabs: logout.php,v 1.0.6 2024/10/11 22:24:39 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -42,22 +42,16 @@ $user = array_key_exists('user', $_SESSION) ? ucwords($_SESSION['user']) : 'Ghos
 Hexforged\Account::Logout($session);
 $hexforged = new KYAULabs\Aurora('index.html', '/cdn', true, true);
 $hexforged->sessions = true;
-$hexforged->title = 'Hexforged: {$user} Logout';
+$hexforged->title = "Hexforged: {$user} Logout";
 $hexforged->description = 'A multiplayer RPG prototype developed by KYAU Labs.';
 $hexforged->dns = [CDN_HOST];
 $hexforged->preload = [
     '/css/hexforged.min.css' => 'style',
     '/javascript/jquery.module.min.js' => 'script',
-    '/fonts/Agave-Regular.ttf' => 'font',
-    '/fonts/Agave-Bold.ttf' => 'font',
-    '/fonts/SavaPro-Light.otf' => 'font',
-    '/fonts/SavaPro-Regular.otf' => 'font',
-    '/fonts/SavaPro-Medium.otf' => 'font',
-    '/fonts/SavaPro-Semibold.otf' => 'font',
-    '/fonts/SavaPro-Bold.otf' => 'font',
-    '/fonts/SavaPro-Black.otf' => 'font',
+    '/javascript/hexforged.min.js' => 'script',
 ];
 $hexforged->css = [
+    '../cdn/css/fonts.min.css' => '//' . CDN_HOST . '/css/fonts.min.css',
     '../cdn/css/hexforged.min.css' => '//' . CDN_HOST . '/css/hexforged.min.css',
 ];
 $hexforged->js = [

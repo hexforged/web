@@ -1,7 +1,7 @@
 <?php
 
 /**
- * $KYAULabs: sessions.php,v 1.0.3 2024/10/08 22:47:02 -0700 kyau Exp $
+ * $KYAULabs: sessions.php,v 1.0.4 2024/10/13 13:24:04 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -278,6 +278,7 @@ class Session
 
         ini_set('session.use_strict_mode', '0');
         session_id($newid);
+        @session_name('hex_session');
         @session_start([
             'cookie_domain' => $_SERVER['HTTP_HOST'],
             'cookie_httponly' => 1,

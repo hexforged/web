@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.6 2024/09/07 14:17:22 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.7 2024/10/13 12:39:07 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -129,7 +129,8 @@ CREATE TABLE `users` (
         PRIMARY KEY (`id`),
         UNIQUE KEY `username` (`username`),
         UNIQUE KEY `email` (`email`),
-        KEY `gid` (`gid`)
+        KEY `gid` (`gid`),
+        KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
@@ -184,4 +185,5 @@ INSERT INTO `version` VALUES (1,0,1,0,'dreams','2024-07-11 10:23:00');
 INSERT INTO `version` VALUES (2,0,1,1,null,'2024-07-16 01:52:00');
 INSERT INTO `version` VALUES (3,0,1,2,null,'2024-07-17 21:28:00');
 INSERT INTO `version` VALUES (4,0,1,3,null,'2024-09-05 05:39:00');
+INSERT INTO `version` VALUES (5,0,1,4,null,'2024-10-13 12:40:00');
 UNLOCK TABLES;

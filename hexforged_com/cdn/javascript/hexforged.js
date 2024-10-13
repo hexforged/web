@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.js,v 1.0.8 2024/10/08 22:47:42 -0700 kyau Exp $
+ * $KYAULabs: hexforged.js,v 1.0.9 2024/10/11 22:22:04 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,7 +27,7 @@
  */
 
 import { $, jQuery } from './jquery.module.min.js';
-import { Ajax } from './ajax.js';
+import { Ajax } from './ajax.min.mjs';
 
 const ajax = new Ajax('hexforged');
 
