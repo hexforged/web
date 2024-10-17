@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexforged.sass,v 1.1.1 2024/10/11 22:22:45 -0700 kyau Exp $
+ * $KYAULabs: hexforged.sass,v 1.1.2 2024/10/17 14:44:41 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -201,6 +201,35 @@ header
     left: 50%
     margin-left: -64px
     top: 22px
+
+  .hex-dash__avatar
+    display: flex
+    align-items: end
+    flex-direction: row
+    position: absolute
+    right: 50%
+    margin-right: 128px
+    top: 2.05rem
+    text-align: left
+
+    h1
+      padding: 0 0.5rem 0 0.4rem
+      margin-bottom: 0.5rem
+      text-align: center
+
+    img
+      position: relative
+      top: 2px
+      width: 60px
+      height: 60px
+      opacity: 0.8
+
+    p.stats
+      font-family: $fontstack-mono
+      @include font-size(12pt)
+      font-weight: bold
+      margin-bottom: 0.4rem
+      //padding-left: 0.4rem
 
   .hex-dash__welcome
     position: absolute

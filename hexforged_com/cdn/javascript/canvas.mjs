@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: canvas.mjs,v 1.0.0 2024/10/09 13:31:35 -0700 kyau Exp $
+ * $KYAULabs: canvas.mjs,v 1.0.1 2024/10/17 14:39:58 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -43,7 +43,7 @@ const SQRT3 = Math.sqrt(3);
  * The radius value used for drawing hexagons.
  * @constant {number}
  */
-const HEX_RADIUS = 30;
+export const HEX_RADIUS = 30;
 /**
  * The height of a single hexagon.
  * @constant {number}
@@ -96,15 +96,26 @@ class Canvas {
     this.canvas_height = 0;
     this.old_canvas_width = 0;
     this.old_canvas_height = 0;
+    Canvas.images = {};
     Canvas.mouse_offset = new Point();
     Canvas.mouse_position = new Hex(NaN, NaN, NaN);
     Canvas.radius = 0;
+    Canvas.game_state = NaN;
+
+    Canvas.AVATAR_SIZE = 80;
+    Canvas.AVATAR_GAP = 20;
+    Canvas.AVATAR_START = new Point();
+    Canvas.AVATAR_END = new Point();
+    Canvas.AVATAR = 0;
+    Canvas.CLASS_SELECTED = 0;
+    Canvas.GENDER_SELECTED = 0;
 
     Canvas.set_radius();
 
     /**
      * Events
      */
+    Canvas.canvas.onclick = Canvas.mouse_click;
     Canvas.canvas.onmousemove = Canvas.mouse_move;
     Canvas.canvas.onmouseout = Canvas.mouse_out;
     window.addEventListener('resize', this.set_dimensions);
@@ -123,27 +134,164 @@ class Canvas {
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     Canvas.ctx.fillRect(0, 0, Canvas.canvas.width, Canvas.canvas.height);
   }
-  
+
+  static mouse_avatar_class(event, rect) {
+    const point = new Point(
+      event.clientX - rect.left,
+      event.clientY - rect.top
+    );
+
+    if (Canvas.canvas.width > 360) {
+      if (point.y >= Canvas.AVATAR_START.y && point.y <= Canvas.AVATAR_END.y) {
+        if (point.x >= Canvas.AVATAR_START.x && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE)) {
+          // avatar 1
+          return 1;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 2
+          return 2;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP * 2) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 3 + Canvas.AVATAR_GAP * 2)) {
+          // avatar 3
+          return 3;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 3 + Canvas.AVATAR_GAP * 3) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 4 + Canvas.AVATAR_GAP * 3)) {
+          // avatar 4
+          return 4;
+        } else {
+          return 0;
+        }
+      } else if (point.y >= (Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE) && point.y <= (Canvas.AVATAR_END.y + Canvas.AVATAR_SIZE)) {
+        if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 5
+          return 5;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP * 2) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 3 + Canvas.AVATAR_GAP * 2)) {
+          // avatar 6
+          return 6;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    } else {
+      if (point.y >= Canvas.AVATAR_START.y && point.y <= Canvas.AVATAR_END.y) {
+        if (point.x >= Canvas.AVATAR_START.x && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE)) {
+          // avatar 1
+          return 1;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 2
+          return 2;
+        } else {
+          return 0;
+        }
+      } else if (point.y >= (Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE) && point.y <= (Canvas.AVATAR_END.y + Canvas.AVATAR_SIZE)) {
+        if (point.x >= Canvas.AVATAR_START.x && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE)) {
+          // avatar 3
+          return 3;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 4
+          return 4;
+        } else {
+          return 0;
+        }
+      } else if (point.y >= (Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE * 2) && point.y <= (Canvas.AVATAR_END.y + Canvas.AVATAR_SIZE * 2)) {
+        if (point.x >= Canvas.AVATAR_START.x && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE)) {
+          // avatar 5
+          return 5;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 6
+          return 6;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    }
+  }
+
+  static mouse_avatar_gender(event, rect) {
+    const point = new Point(
+      event.clientX - rect.left,
+      event.clientY - rect.top
+    );
+
+    if (Canvas.canvas.width > 360) {
+      if (point.y >= Canvas.AVATAR_START.y && point.y <= Canvas.AVATAR_END.y) {
+        if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 1
+          return 1;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP * 2) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 3 + Canvas.AVATAR_GAP * 2)) {
+          // avatar 2
+          return 2;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    } else {
+      if (point.y >= (Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE) && point.y <= (Canvas.AVATAR_END.y + Canvas.AVATAR_SIZE)) {
+        if (point.x >= Canvas.AVATAR_START.x && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE)) {
+          // avatar 1
+          return 1;
+        } else if (point.x >= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE + Canvas.AVATAR_GAP) && point.x <= (Canvas.AVATAR_START.x + Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP)) {
+          // avatar 2
+          return 2;
+        } else {
+          return 0;
+        }
+      }
+    }
+  }
+
+  static mouse_click(event) {
+    const rect = this.getBoundingClientRect();
+    if (Canvas.game_state === 'select-class') {
+      Canvas.CLASS_SELECTED = Canvas.mouse_avatar_class(event, rect);
+    } else if (Canvas.game_state === 'select-gender') {
+      Canvas.GENDER_SELECTED = Canvas.mouse_avatar_gender(event, rect);
+    }
+  }
+
   static mouse_move(event) {
     const rect = this.getBoundingClientRect();
-    const point = new Point(
-      event.clientX - rect.left - this.width / 2,
-      event.clientY - rect.top - this.height / 2
-    );
-    Canvas.mouse_position = point.to_cube(HEX_RADIUS);
+    if (Canvas.game_state === 'map') {
+      const point = new Point(
+        event.clientX - rect.left - this.width / 2,
+        event.clientY - rect.top - this.height / 2
+      );
+      Canvas.mouse_position = point.to_cube(HEX_RADIUS);
 
-    //mouseX = parseInt(event.clientX - Canvas.mouse_offset.x);
-    //mouseY = parseInt(event.clientY - Canvas.mouse_offset.y);
-
-    if (Canvas.mouse_position.on_grid(Canvas.radius)) {
-      this.style.cursor = 'pointer';
+      if (Canvas.mouse_position.on_grid(Canvas.radius)) {
+        this.style.cursor = 'pointer';
+      } else {
+        this.style.cursor = 'default';
+      }
+    } else if (Canvas.game_state === 'select-class') {
+      Canvas.AVATAR = Canvas.mouse_avatar_class(event, rect);
+      if ((Canvas.AVATAR > 0 && Canvas.AVATAR < 4) || (Canvas.AVATAR > 5 && Canvas.AVATAR < 7)) {
+        this.style.cursor = 'pointer';
+      } else {
+        this.style.cursor = 'default';
+      }
+    } else if (Canvas.game_state === 'select-gender') {
+      Canvas.AVATAR = Canvas.mouse_avatar_gender(event, rect);
+      if (Canvas.AVATAR > 0 && Canvas.AVATAR < 3) {
+        this.style.cursor = 'pointer';
+      } else {
+        this.style.cursor = 'default';
+      }
     } else {
-      this.style.cursor = 'default';
+      if (this.style.cursor === 'pointer') {
+        this.style.cursor = 'default';
+        Canvas.AVATAR = 0;
+      }
     }
   }
 
   static mouse_out(event) {
-    Canvas.mouse_position = new Hex(NaN, NaN, NaN);
+    if (Canvas.game_state === 'map') {
+      Canvas.mouse_position = new Hex(NaN, NaN, NaN);
+    }
   }
 
   was_resized() {
@@ -170,6 +318,15 @@ class Canvas {
 
     // Update mouse offset based on container positioning
     Canvas.mouse_offset = new Point(container.left, container.right);
+
+    // constants based on container size
+    if (Canvas.canvas.width > 360) {
+      Canvas.AVATAR_START = new Point((Canvas.canvas.width / 2) - (Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP + 10), Canvas.canvas.height / 2 - (Canvas.AVATAR_SIZE / 2));
+      Canvas.AVATAR_END = new Point((Canvas.canvas.width / 2) + (Canvas.AVATAR_SIZE * 2 + Canvas.AVATAR_GAP + 10), Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE);
+    } else {
+      Canvas.AVATAR_START = new Point((Canvas.canvas.width / 2) - (Canvas.AVATAR_SIZE + 10), Canvas.canvas.height / 2 - Canvas.AVATAR_SIZE);
+      Canvas.AVATAR_END = new Point((Canvas.canvas.width / 2) + (Canvas.AVATAR_SIZE + 10), Canvas.AVATAR_START.y + Canvas.AVATAR_SIZE);
+    }
 
     Canvas.set_radius();
   }

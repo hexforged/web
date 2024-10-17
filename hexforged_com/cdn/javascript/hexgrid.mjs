@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hexgrid.mjs,v 1.0.0 2024/10/09 13:39:35 -0700 kyau Exp $
+ * $KYAULabs: hexgrid.mjs,v 1.0.1 2024/10/17 14:42:41 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -26,7 +26,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Canvas } from './canvas.min.mjs';
+import Canvas, * as cons from './canvas.min.mjs';
 import { Color } from './color.min.mjs';
 import { Hex } from './hex.min.mjs';
 import { Log } from './logger.min.mjs';
@@ -48,7 +48,7 @@ const SQRT3 = Math.sqrt(3);
  * The radius value used for drawing hexagons.
  * @constant {number}
  */
-const HEX_RADIUS = 30;
+const HEX_RADIUS = cons.HEX_RADIUS;
 /**
  * The height of a single hexagon.
  * @constant {number}
@@ -74,7 +74,7 @@ class HexGrid {
 
     // development
     this.cursor_line_highlight = true;
-    this.cursor_ring_highlight = true;
+    this.cursor_ring_highlight = false;
     this.grid_axis_highlight = false;
     this.line = [];
     this.ring = [];
@@ -114,20 +114,7 @@ class HexGrid {
 
         this_q = q_pos + this.origin.q;
         this_r = r_pos + this.origin.r;
-        /*
-        if (this.map.hexes[`${this_q},${this_r}`] !== undefined) {
-          biome = this.map.hexes[`${this_q},${this_r}`].biome;
-          blocked = this.map.hexes[`${this_q},${this_r}`].blocked;
-          npcs = this.map.hexes[`${this_q},${this_r}`].npcs;
-          objects = this.map.hexes[`${this_q},${this_r}`].objects;
-        } else {
-          // if tile does not exist on map make it blocked water tile
-          biome = 4;
-          blocked = true;
-          npcs = [];
-          objects = [];
-        }
-        */
+
         let data = this.get_hex(this_q, this_r);
         const cube = new OffsetCoord(q_pos, r_pos).to_cube();
 
@@ -141,93 +128,93 @@ class HexGrid {
   }
   
   draw() {
-    Canvas.ctx.font = 'bold 10pt SUSE'
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.strokeStyle = 'rgba(19,19,19,1)'
+    Canvas.ctx.font = 'bold 10pt SUSE';
+    Canvas.ctx.textAlign = 'center';
+    Canvas.ctx.textBaseline = 'middle';
+    Canvas.ctx.strokeStyle = 'rgba(19,19,19,1)';
 
-    const mouse_on_grid = Canvas.mouse_position.on_grid(Canvas.radius)
-    const hex_center = new Hex(0,0,0)
+    const mouse_on_grid = Canvas.mouse_position.on_grid(Canvas.radius);
+    const hex_center = new Hex(0,0,0);
 
     if (mouse_on_grid) {
       if (this.cursor_ring_highlight) {
         // compute hex ring of target hex on mouse over
-        this.ring = this.get_ring(hex_center.distance(Canvas.mouse_position))
+        this.ring = this.get_ring(hex_center.distance(Canvas.mouse_position));
       }
       if (this.cursor_line_highlight) {
         // line draw to target hex on mouse over
-        this.line = hex_center.linedraw(Canvas.mouse_position)
+        this.line = hex_center.linedraw(Canvas.mouse_position);
       }
       if (!this.cursor_ring_highlight && !this.cursor_line_highlight) {
-        this.ring = []
-        this.line = []
+        this.ring = [];
+        this.line = [];
       }
     } else {
-      this.ring = []
-      this.line = []
+      this.ring = [];
+      this.line = [];
     }
 
     for (let [key, value] of this.grid.entries()) {
-      const hex = value.hex
+      const hex = value.hex;
 
       //Log.info(`[${hex.q}, ${hex.r}, ${hex.s}] x,y: ${key}`)
 
-      Canvas.ctx.beginPath()
-      Canvas.polygon(hex.x, hex.y, HEX_RADIUS, 6, RADIANS_TO_DEGREES)
+      Canvas.ctx.beginPath();
+      Canvas.polygon(hex.x, hex.y, HEX_RADIUS, 6, RADIANS_TO_DEGREES);
 
       // Determine fill color
-      let rgba = Color.coords.def
+      let rgba = Color.coords.def;
+      let biome = HexGrid.biomes[hex.biome];
 
-      if (hex.biome in Color.biomes) {
-        rgba = Color.biomes[hex.biome]
-        //Log.info('biome: '+biomes[hex.biome].color)
+      if (Object.hasOwn(Color.biomes, biome)) {
+        rgba = Color.biomes[biome];
       }
 
       if (this.grid_axis_highlight) {
         if (hex.q == 0 && hex.r == 0 && hex.s == 0) {
-          rgba = Color.coords.origin
+          rgba = Color.coords.origin;
         } else if (hex.q == 0) {
-          rgba = Color.coords.q
+          rgba = Color.coords.q;
         } else if (hex.r == 0) {
-          rgba = Color.coords.r
+          rgba = Color.coords.r;
         } else if (hex.s == 0) {
-          rgba = Color.coords.s
+          rgba = Color.coords.s;
         }
       }
       // highlight current moused over hexagon
-      const mouse_on_hex = hex.cube.compare(Canvas.mouse_position)
+      const mouse_on_hex = hex.cube.compare(Canvas.mouse_position);
       if (hex.q == 0 && hex.r == 0 && hex.s == 0) {
-        rgba = Color.coords.origin
+        rgba = Color.coords.origin;
       } else if (mouse_on_grid && mouse_on_hex) {
-        rgba = Color.coords.highlight
+        rgba = Color.coords.highlight;
       } else if (mouse_on_grid && this.ring.includes(`${hex.q},${hex.r},${hex.s}`)) {
         // highlight hex ring of target hex on mouse over
-        rgba = Color.coords.highlight_ring
+        rgba = Color.coords.highlight_ring;
       } else if (mouse_on_grid && this.line.includes(`${hex.q},${hex.r},${hex.s}`)) {
         // line draw to target hex on mouse over
-        rgba = Color.coords.r
+        rgba = Color.coords.r;
       }
-      Canvas.ctx.fillStyle = `rgba(${rgba.color.r},${rgba.color.g},${rgba.color.b},${rgba.opacity})`
-      Canvas.ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(${rgba.color.r},${rgba.color.g},${rgba.color.b},${rgba.opacity})`;
+      Canvas.ctx.fill();
 
       // Draw stroke
-      Canvas.ctx.stroke()
+      Canvas.ctx.stroke();
 
       // Draw text
-      Canvas.ctx.fillStyle = 'rgb(19, 19, 19)'
+      Canvas.ctx.fillStyle = 'rgb(19, 19, 19)';
       if (hex.r == 0 && hex.q == 0) {
-        Canvas.ctx.fillText(`q, r, s`, hex.x, hex.y)
+        Canvas.ctx.fillText(`q, r, s`, hex.x, hex.y);
       } else if (mouse_on_grid && mouse_on_hex) {
-        Canvas.ctx.fillText(`${hex.q}, ${hex.r}, ${hex.s}`, hex.x, hex.y)
+        Canvas.ctx.fillText(`${hex.q}, ${hex.r}, ${hex.s}`, hex.x, hex.y);
       } else {
-        Canvas.ctx.fillStyle = 'rgb(150, 150, 150)'
-        Canvas.ctx.fillText(`${hex.q}, ${hex.r}, ${hex.s}`, hex.x, hex.y)
+        Canvas.ctx.fillStyle = 'rgb(150, 150, 150)';
+        Canvas.ctx.fillText(`${hex.q}, ${hex.r}, ${hex.s}`, hex.x, hex.y);
       }
     }
   }
   
   get_hex(q, r) {
-    return this.map.hexes[`${q},${r}`] || { biome: 4, blocked: true, npcs: [], objects: [] };
+    return this.map.hexes[`${q},${r}`] || { biome: 2, blocked: true, npcs: [], objects: [] };
   }
   
   get_ring(radius) {
@@ -247,6 +234,11 @@ class HexGrid {
     this.init();
   }
 }
+HexGrid.biomes = [
+  'dirt',
+  'grass',
+  'water',
+];
 
 export { HexGrid };
 export default HexGrid;

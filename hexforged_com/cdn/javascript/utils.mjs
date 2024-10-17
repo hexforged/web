@@ -1,7 +1,6 @@
-<?php
-
 /**
- * $KYAULabs: header.php,v 1.0.1 2024/10/17 03:15:32 -0700 kyau Exp $
+ *
+ * $KYAULabs: canvas.mjs,v 1.0.0 2024/10/09 13:31:35 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,52 +26,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Hexforged\Layouts;
+const cdn = new URL(document.querySelector('script[src*="hexforged.min.js"]').src).hostname;
 
-require_once(__DIR__ . '/../../.env');
-require_once(__DIR__ . '/../backend/account.php');
-
-/**
- * Class Header
- *
- * This class handles the HTML output for the Hexforged frontend header.
- */
-class Header
-{
-    private static function getLogoImg(string $size): string
-    {
-        if ($size === 'large') {
-            return 'logo@512x';
-        } else if ($size === 'medium') {
-            return 'logo@256x';
-        } else {
-            return 'logo@128x';
-        }
-    }
-
-    /**
-     * Generates the header HTML.
-     *
-     * @return string HTML code for <header/>.
-     */
-    public static function output(string $size): string
-    {
-        $image = self::getLogoImg($size);
-        $cdn = CDN_HOST;
-        $ret = <<<EOF
-        <a href="/"><img alt="" id="logo" src="//{$cdn}/images/{$image}.png" loading="eager" /></a>
-EOF;
-        if (\Hexforged\Account::isUserLoggedIn()) {
-            $user = ucwords($_SESSION['user']);
-            $ret .= <<<EOF
-        <div class="hex-dash__avatar">
-        </div>
-        <div class="hex-dash__welcome">
-            <p>Welcome back, <span class="hex-color__h_cyan">{$user}!</span></p>
-            <p><a href="/account">manage</a> | <a href="/logout">logout</a></p>
-        </div>
-EOF;
-        }
-        return $ret;
-    }
+export function preload_images(urls) {
+  const promises = urls.map((url) => {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.src = `https://${cdn}/images/${url}`;
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(`Image failed to load: https://${cdn}/images/${url}`);
+    });
+  });
+  return Promise.all(promises);
 }

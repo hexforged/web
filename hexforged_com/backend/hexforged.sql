@@ -1,4 +1,4 @@
--- $KYAULabs: hexforged.sql,v 1.0.7 2024/10/13 12:39:07 -0700 kyau Exp $
+-- $KYAULabs: hexforged.sql,v 1.0.8 2024/10/14 15:08:38 -0700 kyau Exp $
 -- ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 -- █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
 -- █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -77,7 +77,32 @@ CREATE TABLE `activation` (
         PRIMARY KEY (`id`),
         UNIQUE KEY `uid` (`uid`),
         UNIQUE KEY `token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+
+--
+-- Table structure for table `classes`
+--
+
+DROP TABLE IF EXISTS `classes`;
+CREATE TABLE `classes` (
+        `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Class ID',
+        `name` varchar(64) NOT NULL COMMENT 'Class Name',
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+
+--
+-- Dumping data for table `classes`
+--
+
+LOCK TABLES `classes` WRITE;
+INSERT INTO `classes` VALUES (1,'bard');
+INSERT INTO `classes` VALUES (2,'cleric');
+INSERT INTO `classes` VALUES (3,'fighter');
+INSERT INTO `classes` VALUES (4,'monk');
+INSERT INTO `classes` VALUES (5,'rogue');
+INSERT INTO `classes` VALUES (6,'wizard');
+UNLOCK TABLES;
 
 --
 -- Table structure for table `leagues`
@@ -95,14 +120,76 @@ CREATE TABLE `leagues` (
         PRIMARY KEY (`id`),
         UNIQUE KEY `name` (`name`),
         UNIQUE KEY `token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
 -- Dumping data for table `leagues`
 --
 
 LOCK TABLES `leagues` WRITE;
-INSERT INTO `leagues` VALUES (1,'Alpha',UUID_TO_BIN('177d775b-b1af-4d1c-8f08-848d0d38d28e'),'2024-07-08 02:00:00',ADD_MONTHS('2024-07-08 02:00:00',3),1);
+INSERT INTO `leagues` VALUES (1,'Alpha',UUID_TO_BIN('177d775b-b1af-4d1c-8f08-848d0d38d28e'),'2024-10-14 02:00:00',ADD_MONTHS('2024-10-14 02:00:00',3),1);
+UNLOCK TABLES;
+
+--
+-- Table structure for table `league_alpha`
+--
+
+DROP TABLE IF EXISTS `league_alpha`;
+CREATE TABLE `league_alpha` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Character ID',
+	`uid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'User ID',
+	`class` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'Character Class',
+	`gender` enum('female', 'male') NOT NULL DEFAULT 'male' COMMENT 'Character Gender',
+	`level` smallint(5) unsigned NOT NULL DEFAULT 1 COMMENT 'Character Level',
+	`experience` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT 'Character Experience Points',
+	`hp` mediumint(8) unsigned NOT NULL DEFAULT 25 COMMENT 'Health',
+	`hp_max` mediumint(8) unsigned NOT NULL DEFAULT 25 COMMENT 'Health Max',
+	`mp` mediumint(8) unsigned NOT NULL DEFAULT 10 COMMENT 'Mana',
+	`mp_max` mediumint(8) unsigned NOT NULL DEFAULT 10 COMMENT 'Mana Max',
+	`attack` smallint(5) unsigned NOT NULL DEFAULT 5 COMMENT 'Attack Bonus',
+	`magic` smallint(5) unsigned NOT NULL DEFAULT 5 COMMENT 'Magic Attack Bonus',
+	`defense` smallint(5) unsigned NOT NULL DEFAULT 5 COMMENT 'Defense Bonus',
+	`map` smallint(5) unsigned NOT NULL DEFAULT 1 COMMENT 'Map',
+	`pos_q` smallint(5) signed NOT NULL DEFAULT 0 COMMENT 'Hex Q Position',
+	`pos_r` smallint(5) signed NOT NULL DEFAULT 0 COMMENT 'Hex R Position',
+	`pos_s` smallint(5) signed NOT NULL DEFAULT 0 COMMENT 'Hex S Position',
+	`speed` decimal(3,1) unsigned NOT NULL DEFAULT 0.5 COMMENT 'Movement Speed',
+	`equipment` json NOT NULL DEFAULT '{"weapon": null, "alternative": null, "helmet": null, "body": null, "gloves": null, "legs": null, "boots": null}' COMMENT 'Character Equipment',
+	`inventory` json NOT NULL DEFAULT '[]' COMMENT 'Character Inventory',
+	PRIMARY KEY (`id`),
+        CONSTRAINT `fk_uid`
+                FOREIGN KEY (`uid`) REFERENCES `users` (`id`)
+                ON DELETE CASCADE
+                ON UPDATE RESTRICT,
+        CONSTRAINT `fk_class` 
+                FOREIGN KEY (`class`) REFERENCES `classes` (`id`),
+	UNIQUE KEY `uid` (`uid`),
+	INDEX `class` (`class`),
+	INDEX `gender` (`gender`)
+) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+
+--
+-- Table structure for table `maps`
+--
+
+DROP TABLE IF EXISTS `maps`;
+CREATE TABLE `maps` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Map ID',
+	`name` varchar(64) NOT NULL COMMENT 'Map Abbreviation',
+	`fullname` varchar(128) NOT NULL COMMENT 'Map Name',
+	`width` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT 'Map Width',
+	`height` smallint(5) unsigned NOT NULL DEFAULT 0 COMMENT 'Map Height',
+	PRIMARY KEY (`id`),
+	INDEX `name` (`name`),
+	INDEX `fullname` (`fullname`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+
+--
+-- Dumping data for table `maps`
+--
+
+LOCK TABLES `maps` WRITE;
+INSERT INTO `maps` VALUES (1,'worldmap','World Map',9,9);
 UNLOCK TABLES;
 
 --
@@ -129,9 +216,9 @@ CREATE TABLE `users` (
         PRIMARY KEY (`id`),
         UNIQUE KEY `username` (`username`),
         UNIQUE KEY `email` (`email`),
-        KEY `gid` (`gid`),
-        KEY `token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+        INDEX `gid` (`gid`),
+        INDEX `token` (`token`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -156,7 +243,7 @@ CREATE TABLE `users_tokens` (
         PRIMARY KEY (`id`),
         UNIQUE KEY `selector` (`selector`),
         CONSTRAINT `userid` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
 -- Table structure for table `version`
@@ -173,8 +260,8 @@ CREATE TABLE `version` (
         -- FROM_UNIXTIME(), UNIX_TIMESTAMP()
         PRIMARY KEY (`id`),
         UNIQUE KEY `codename` (`codename`),
-        KEY `major` (`major`)
-) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
+        INDEX `major` (`major`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=ascii COLLATE=ascii_general_ci;
 
 --
 -- Dumping data for table `version`

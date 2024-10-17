@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: ui.mjs,v 1.0.0 2024/10/09 13:54:29 -0700 kyau Exp $
+ * $KYAULabs: ui.mjs,v 1.0.1 2024/10/17 14:42:52 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -28,6 +28,7 @@
 
 import { Canvas } from './canvas.min.mjs';
 import { Color } from './color.min.mjs';
+import { preload_images } from './utils.min.mjs';
 
 class UI {
   constructor() {
@@ -82,6 +83,9 @@ class UI {
     if (state === 'disconnected') {
       Canvas.ctx.fillStyle = 'rgba(150,0,0,1)';
       Canvas.ctx.fillText(`Server disconnected!`, Canvas.canvas.width / 2, Canvas.canvas.height / 2);
+    } else if (state === 'logged_in') {
+      Canvas.ctx.fillStyle = 'rgba(150,0,0,1)';
+      Canvas.ctx.fillText(`Already logged in!`, Canvas.canvas.width / 2, Canvas.canvas.height / 2);
     } else if (state === 'connected') {
       Canvas.ctx.fillStyle = 'rgba(0,150,0,1)';
       Canvas.ctx.fillText(`Connected!`, Canvas.canvas.width / 2, Canvas.canvas.height / 2);
@@ -113,6 +117,21 @@ class UI {
     }
     Canvas.ctx.fillStyle = 'rgba(0,150,0,1)'
     Canvas.ctx.fillText(latency + " ms", Canvas.canvas.width - 12, 32)
+  }
+
+  static async update_avatar(character) {
+    const classes = [
+      `classes/bard-gray.png`,
+      `classes/cleric-gray.png`,
+      `classes/fighter-gray.png`,
+      `classes/monk-gray.png`,
+      `classes/rogue-gray.png`,
+      `classes/wizard-gray.png`,
+    ];
+    [Canvas.images.bard, Canvas.images.cleric, Canvas.images.fighter, Canvas.images.monk, Canvas.images.rogue, Canvas.images.wizard] = await preload_images(classes);
+    character.avatar.replaceChildren(Canvas.images[character.class_name]);
+    character.avatar.insertAdjacentHTML('beforeend', `<h1>${character.level}&nbsp;</h1>`);
+    character.avatar.insertAdjacentHTML('beforeend', `<p class="stats"><span class="hex-color__red">HP: ${character.health[0]}</span><br/><span class="hex-color__blue">MP: ${character.mana[0]}</span></p>`);
   }
 }
 

@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: hex.mjs,v 1.0.0 2024/10/09 13:37:59 -0700 kyau Exp $
+ * $KYAULabs: hex.mjs,v 1.0.1 2024/10/17 14:42:28 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -112,7 +112,10 @@ class Hex {
     return new Hex(this.q * (1.0 - t) + b.q * t, this.r * (1.0 - t) + b.r * t, this.s * (1.0 - t) + b.s * t);
   }
   linedraw(b) {
-    return Pathfinding.linedraw(this, b)
+    return Pathfinding.linedraw(this, b);
+  }
+  nan() {
+    return isNaN(this.q) && isNaN(this.r) && isNaN(this.s);
   }
 }
 Hex.directions = [new Hex(1, 0, -1), new Hex(1, -1, 0), new Hex(0, -1, 1), new Hex(-1, 0, 1), new Hex(-1, 1, 0), new Hex(0, 1, -1)];

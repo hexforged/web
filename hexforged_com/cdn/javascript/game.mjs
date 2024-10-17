@@ -1,6 +1,6 @@
 /**
  *
- * $KYAULabs: game.mjs,v 1.0.0 2024/10/09 13:26:13 -0700 kyau Exp $
+ * $KYAULabs: game.mjs,v 1.0.1 2024/10/17 14:40:54 -0700 kyau Exp $
  * ▄▄▄▄ ▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  * █ ▄▄ ▄ ▄▄▄▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄ ▄▄▄  ▀
  * █ ██ █ ██ ▀ ██ █ ██ ▀ ██ █ ██ █ ██    ██ ▀ ██ █ █
@@ -27,513 +27,11 @@
  */
 
 import { Canvas } from './canvas.min.mjs';
+import { PC, NPC } from './character.min.mjs';
 import { HexGrid } from './hexgrid.min.mjs';
 import { Log } from './logger.min.mjs';
 import { UI } from './ui.min.mjs';
-
-const MAP_DATA = `{
-  "name": "Nova Civitas",
-  "layout": "even-r",
-  "size": {
-      "height": 9,
-      "width": 9
-  },
-  "origin": {
-    "q": 4,
-    "r": 4
-  },
-  "hexes": {
-      "0,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,0": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "2,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "7,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,0": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,1": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,1": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "2,1": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "3,1": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "4,1": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "5,1": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "6,1": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "7,1": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,1": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,2": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "7,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,2": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,3": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "7,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,3": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,4": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "1,4": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "2,4": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "3,4": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,4": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,4": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,4": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "7,4": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "8,4": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,5": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "6,5": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "7,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,5": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,6": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,6": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,6": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,6": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "4,6": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "5,6": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "6,6": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "7,6": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "8,6": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "0,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "7,7": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "8,7": {
-          "biome": 4,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "0,8": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "1,8": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "2,8": {
-          "biome": 0,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "3,8": {
-          "biome": 3,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "4,8": {
-          "biome": 3,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "5,8": {
-          "biome": 3,
-          "blocked": false,
-          "npcs": [],
-          "objects": []
-      },
-      "6,8": {
-          "biome": 5,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "7,8": {
-          "biome": 5,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      },
-      "8,8": {
-          "biome": 5,
-          "blocked": true,
-          "npcs": [],
-          "objects": []
-      }
- },
-  "boundaries": {
-
-  }
-}`
+import { preload_images } from './utils.min.mjs';
 
 /**
  * Class representing the game loop.
@@ -546,7 +44,10 @@ class Game {
     this.active = false;
     this.state = 'disconnected';
     this.canvas = new Canvas();
-    this.grid;
+    this.username = '';
+    this.character;
+    this.grid = null;
+    this.map = null;
     
     // socket.io
     this.hostname = hostname;
@@ -579,7 +80,7 @@ class Game {
     this.canvas.set_dimensions();
     Canvas.clear();
     // initialize game
-    this.grid = new HexGrid(MAP_DATA);
+    //this.grid = new HexGrid(MAP_DATA);
 
     this.state = 'connecting';
     this.setup_network(this.hostname);
@@ -617,6 +118,7 @@ class Game {
       }, 2000);
     });
     this.socket.on('connect_error', (error) => {
+      Canvas.game_state = null;
       this.state = 'connecting';
       Log.warn(`dolpin reconnecting...`);
       if (error.message === 'xhr poll error')
@@ -630,6 +132,9 @@ class Game {
     });
     this.socket.on('error', (error) => {
       Log.error(error);
+      if (error === 'already logged in') {
+        UI.draw_conn_state('logged_in');
+      }
     });
     this.socket.on('disconnect', (reason, details) => {
       if (!this.socket.active) {
@@ -638,10 +143,51 @@ class Game {
         this.stop();
       }
     });
-    this.socket.on('hello', (text) => {
-      Log.success(`${text.hello} authenticated`);
+    // user authentication
+    this.socket.on('hello', async (text) => {
+      this.username = text.username;
+      Log.success(`${this.username} authenticated`);
+
+      // get character data
+      const char = await this.socket.emitWithAck('get-character');
+      if (Object.keys(char).length !== 0) {
+        Log.success('character loaded')
+        // set the player character
+        this.character = new PC(char);
+        UI.update_avatar(this.character);
+        // get the worldmap
+        this.map = await this.socket.emitWithAck('get-worldmap');
+        if (this.map !== null) {
+          this.grid = new HexGrid(this.map);
+          Canvas.game_state = 'map';
+        }
+      } else {
+        const classes = [
+          `classes/bard.png`,
+          `classes/cleric.png`,
+          `classes/fighter.png`,
+          `classes/monk.png`,
+          `classes/rogue.png`,
+          `classes/wizard.png`,
+          `genders/mars.png`,
+          `genders/venus.png`,
+          `backgrounds/bg-select.png`,
+        ];
+        [Canvas.images.bard, Canvas.images.cleric, Canvas.images.fighter, Canvas.images.monk, Canvas.images.rogue, Canvas.images.wizard, Canvas.images.mars, Canvas.images.venus, Canvas.images.bg_select] = await preload_images(classes);
+        const classes_gray = [
+          `classes/bard-gray.png`,
+          `classes/cleric-gray.png`,
+          `classes/fighter-gray.png`,
+          `classes/monk-gray.png`,
+          `classes/rogue-gray.png`,
+          `classes/wizard-gray.png`,
+          `genders/mars-gray.png`,
+          `genders/venus-gray.png`,
+        ];
+        [Canvas.images.bard_gray, Canvas.images.cleric_gray, Canvas.images.fighter_gray, Canvas.images.monk_gray, Canvas.images.rogue_gray, Canvas.images.wizard_gray, Canvas.images.mars_gray, Canvas.images.venus_gray] = await preload_images(classes_gray);
+        Canvas.game_state = 'select-class';
+      }
     });
-    //this.socket.on('pong', this.latency_update.bind(this));
   }
 
   /**
@@ -657,24 +203,55 @@ class Game {
   /**
    * Render the current frame to the canvas.
    */
-  render() {
+  async render() {
     Canvas.clear();
 
-    // Rebuild the grid if the canvas has been resized
-    if (this.canvas.was_resized()) {
-      this.grid.rebuild();
-      //Log.info(`grid radius changed ${this.grid.old_grid_radius} => ${this.grid.grid_radius}`);
-    }
+    if (Canvas.game_state === 'select-class') {
+      // TODO: render character creation
+      PC.draw_class_select();
+      if (Canvas.CLASS_SELECTED > 0) {
+        Canvas.game_state = 'loading';
+        Canvas.game_state = 'select-gender';
+      }
+    } else if (Canvas.game_state === 'select-gender') {
+      // TODO: render character creation
+      PC.draw_gender_select();
+      if (Canvas.GENDER_SELECTED > 0) {
+        Canvas.game_state = 'loading';
+        const class_name = PC.CLASSES[Canvas.CLASS_SELECTED-1];
+        const gender_name = PC.GENDERS[Canvas.GENDER_SELECTED-1];
+        Log.info(`create ${gender_name} ${class_name}`);
+        const char = await this.socket.emitWithAck('create-character', {class: Canvas.CLASS_SELECTED, gender: Canvas.GENDER_SELECTED});
+        if (Object.keys(char).length !== 0) {
+          Log.success('character created')
+          // set the player character
+          this.character = new PC(char);
+          UI.update_avatar(this.character);
+          // get the worldmap
+          this.map = await this.socket.emitWithAck('get-worldmap');
+          if (this.map !== null) {
+            this.grid = new HexGrid(this.map);
+            Canvas.game_state = 'map';
+          }
+        }
+      }
+    } else if (Canvas.game_state === 'map') {
+      // Rebuild the grid if the canvas has been resized
+      if (this.canvas.was_resized()) {
+        this.grid.rebuild();
+        //Log.info(`grid radius changed ${this.grid.old_grid_radius} => ${this.grid.grid_radius}`);
+      }
 
-    if (this.socket.connected) {
-      this.grid.draw();
+      if (this.socket.connected) {
+        this.grid.draw();
+      }
     }
   }
 
   /**
    * Updates and displays the game's user interface.
    */
-  render_ui() {
+  async render_ui() {
     if (this.show_fps) {
       // Calculate the number of seconds passed since the last frame
       let seconds_passed = this.delta / 1000;
@@ -689,8 +266,10 @@ class Game {
       UI.draw_latency(this.latency);
     }
 
-    // Show mouse coordinates
-    UI.draw_coords(Canvas.mouse_position);
+    if (Canvas.game_state === 'map') {
+      // Show mouse coordinates
+      UI.draw_coords(Canvas.mouse_position);
+    }
   }
 
   /**
@@ -738,6 +317,7 @@ class Game {
   stop() {
     Log.error('dolphin disconnected');
     UI.draw_conn_state('disconnected');
+    Canvas.game_state = null;
     this.active = false;
   }
 }
