@@ -47,8 +47,8 @@ composer install
 npm ci
 git config core.hooksPath .github/hooks
 
-# serve locally
-php -S 127.0.0.1:8080 -t public
+# serve locally (same-origin /cdn asset paths instead of the CDN host)
+HEXFORGED_CDN_HOST=off php -S 127.0.0.1:8080 -t public
 ```
 
 ### Testing
@@ -61,6 +61,12 @@ Development follows strict TDD (Red → Green → Refactor) — see
 [AGENTS.md](AGENTS.md).
 
 ### Deployment
+
+All static assets (css, js, images, fonts) are served from
+**cdn.hexforged.com** in production; the PHP app only renders HTML and
+computes SRI hashes from the local copies in `public/cdn/`. Deploy the
+release tarball to the web host, then sync `public/cdn/` to the CDN host.
+Set `HEXFORGED_CDN_HOST=off` to serve assets same-origin (local dev).
 
 Point the web server docroot at `public/`. nginx example:
 

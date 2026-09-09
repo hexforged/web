@@ -13,7 +13,12 @@ use KYAULabs\Aurora;
  * Class Site
  *
  * Factory that wires the Aurora template engine for the Hexforged site:
- * template overlay, metadata, stylesheets and ES modules with SRI hashing.
+ * template overlay, metadata, CDN-hosted stylesheets and ES modules with
+ * SRI hashing (hashes are computed from the local copies of the files).
+ *
+ * All static assets (css, js, images, fonts) are served from
+ * cdn.hexforged.com in production. Set HEXFORGED_CDN_HOST=off to serve
+ * them same-origin from /cdn for local development.
  */
 final class Site
 {
@@ -25,6 +30,20 @@ final class Site
         . 'Develop masteries, reshape battlefields, raise strongholds and restore a '
         . 'universe consumed by corruption. Coming soon.';
 
+    /** @var string CDN_HOST The production static-asset host */
+    public const CDN_HOST = 'cdn.hexforged.com';
+
+    /**
+     * Resolve the base URL for static assets.
+     *
+     * @return string "https://cdn.hexforged.com" in production, "/cdn"
+     *                (same-origin) when HEXFORGED_CDN_HOST=off.
+     */
+    public static function cdnBase(): string
+    {
+        return getenv('HEXFORGED_CDN_HOST') === 'off' ? '/cdn' : 'https://' . self::CDN_HOST;
+    }
+
     /**
      * Create the configured Aurora instance.
      *
@@ -35,16 +54,35 @@ final class Site
     {
         require_once $root . '/aurora/aurora.inc.php';
 
+        $cdn = self::cdnBase();
+        $local = $root . '/public/cdn';
+
         $debug = getenv('HEXFORGED_DEBUG') === '1';
         $site = new Aurora('index.html', '/public/cdn', $debug, true, $root . '/templates');
         $site->title = self::TITLE;
         $site->description = self::DESCRIPTION;
         $site->css = [
-            $root . '/public/cdn/css/hexforged.css' => '/cdn/css/hexforged.css',
+            $local . '/css/hexforged.css' => $cdn . '/css/hexforged.css',
         ];
         $site->mjs = [
-            $root . '/public/cdn/js/hexglobe.js' => '/cdn/js/hexglobe.js',
+            $local . '/js/hexglobe.js' => $cdn . '/js/hexglobe.js',
         ];
+
+        // Brand/icon URLs used by the head template.
+        $site->icon_svg = $cdn . '/brand/icons/favicon.svg';
+        $site->icon_ico = $cdn . '/brand/icons/favicon.ico';
+        $site->apple_touch = $cdn . '/brand/icons/app/hexforged-app-dark-180.png';
+        $site->manifest = $cdn . '/brand/icons/site.webmanifest';
+
+        // Preload key assets from the CDN (skipped in same-origin mode:
+        // Aurora's preload requires a dns-prefetch host).
+        if ($cdn !== '/cdn') {
+            $site->dns = [self::CDN_HOST];
+            $site->preload = [
+                '/css/hexforged.css' => 'style',
+                '/js/hexglobe.js' => 'script',
+            ];
+        }
         return $site;
     }
 }

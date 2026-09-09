@@ -42,24 +42,44 @@ test('renders head metadata for hexforged', function () {
 test('links the brand favicons and manifest', function () {
     $html = renderHomePage();
 
-    expect($html)->toContain('/cdn/brand/icons/favicon.svg');
-    expect($html)->toContain('/cdn/brand/icons/favicon.ico');
-    expect($html)->toContain('/cdn/brand/icons/site.webmanifest');
+    expect($html)->toContain('https://cdn.hexforged.com/brand/icons/favicon.svg');
+    expect($html)->toContain('https://cdn.hexforged.com/brand/icons/favicon.ico');
+    expect($html)->toContain('https://cdn.hexforged.com/brand/icons/site.webmanifest');
 });
 
-test('injects the stylesheet with a valid sha512 sri hash', function () {
+test('injects the stylesheet from the cdn with a valid sha512 sri hash', function () {
     $root = dirname(__DIR__, 2);
     $html = renderHomePage();
 
-    expect($html)->toContain('/cdn/css/hexforged.css');
+    expect($html)->toContain('https://cdn.hexforged.com/css/hexforged.css');
     expect($html)->toContain('integrity="' . sri($root . '/public/cdn/css/hexforged.css') . '"');
+});
+
+test('preloads key assets with dns prefetch and preconnect for the cdn', function () {
+    $html = renderHomePage();
+
+    expect($html)->toContain('<link rel="dns-prefetch" href="//cdn.hexforged.com"');
+    expect($html)->toContain('<link rel="preconnect" href="//cdn.hexforged.com"');
+    expect($html)->toContain('<link rel="preload" href="//cdn.hexforged.com/css/hexforged.css');
+    expect($html)->toContain('<link rel="preload" href="//cdn.hexforged.com/js/hexglobe.js');
+});
+
+test('serves assets from the same origin when HEXFORGED_CDN_HOST=off', function () {
+    putenv('HEXFORGED_CDN_HOST=off');
+    $html = renderHomePage();
+    putenv('HEXFORGED_CDN_HOST');
+
+    expect($html)->toContain('href="/cdn/css/hexforged.css');
+    expect($html)->toContain('src="/cdn/js/hexglobe.js');
+    expect($html)->toContain('src="/cdn/brand/logo/hexforged-wordmark.svg');
+    expect($html)->not->toContain('cdn.hexforged.com/css');
 });
 
 test('injects the three.js hex globe module with a valid sri hash', function () {
     $root = dirname(__DIR__, 2);
     $html = renderHomePage();
 
-    expect($html)->toContain('/cdn/js/hexglobe.js');
+    expect($html)->toContain('https://cdn.hexforged.com/js/hexglobe.js');
     expect($html)->toContain('type="module"');
     expect($html)->toContain('integrity="' . sri($root . '/public/cdn/js/hexglobe.js') . '"');
 });
@@ -74,7 +94,7 @@ test('vendored three.js runtime is present for the module import', function () {
 test('renders the hero with wordmark and coming soon call to action', function () {
     $html = renderHomePage();
 
-    expect($html)->toContain('/cdn/brand/logo/hexforged-wordmark.svg');
+    expect($html)->toContain('https://cdn.hexforged.com/brand/logo/hexforged-wordmark.svg');
     expect($html)->toContain('Coming Soon');
     expect($html)->toContain('<canvas') || expect($html)->toContain('id="hexglobe"');
 });

@@ -66,9 +66,10 @@ final class HomePage
             $links .= "\t\t\t<li><a href=\"#{$id}\">{$label}</a></li>\n";
         }
         $discord = self::DISCORD;
+        $emblem = Site::cdnBase() . '/brand/logo/hexforged-emblem.svg';
         return <<<HTML
             <nav class="site-nav" aria-label="Primary">
-            \t<a class="site-nav__brand" href="#top"><img src="/cdn/brand/logo/hexforged-emblem.svg" alt="" width="40" height="40" /> <span>Hexforged</span></a>
+            \t<a class="site-nav__brand" href="#top"><img src="{$emblem}" alt="" width="40" height="40" /> <span>Hexforged</span></a>
             \t<ul class="site-nav__links">
         {$links}\t\t</ul>
             \t<a class="btn btn--primary site-nav__cta" href="{$discord}" rel="noopener" target="_blank">Join the Discord</a>
@@ -86,11 +87,12 @@ final class HomePage
     {
         $discord = self::DISCORD;
         $repo = self::GAME_REPO;
+        $wordmark = Site::cdnBase() . '/brand/logo/hexforged-wordmark.svg';
         return <<<HTML
             <header class="hero" id="top">
             \t<canvas id="hexglobe" aria-hidden="true"></canvas>
             \t<div class="hero__content">
-            \t\t<img class="hero__wordmark" src="/cdn/brand/logo/hexforged-wordmark.svg" alt="Hexforged" width="640" height="217" />
+            \t\t<img class="hero__wordmark" src="{$wordmark}" alt="Hexforged" width="640" height="217" />
             \t\t<p class="hero__tagline">A gritty isometric online <abbr title="action role-playing game">ARPG</abbr>. Five masteries. One grimoire. A universe to take back.</p>
             \t\t<p class="hero__badge"><span class="hero__badge-dot" aria-hidden="true"></span> Coming Soon</p>
             \t\t<div class="hero__actions">
@@ -166,9 +168,10 @@ final class HomePage
     {
         $discord = self::DISCORD;
         $repo = self::GAME_REPO;
+        $emblem = Site::cdnBase() . '/brand/logo/hexforged-emblem.svg';
         return <<<HTML
             \t<section class="cta">
-            \t\t<img class="cta__emblem" src="/cdn/brand/logo/hexforged-emblem.svg" alt="" width="220" height="220" />
+            \t\t<img class="cta__emblem" src="{$emblem}" alt="" width="220" height="220" />
             \t\t<h2 class="cta__title">Coming Soon</h2>
             \t\t<p class="cta__body">The forge is lit and the first world is taking shape. Follow the work as it happens.</p>
             \t\t<div class="hero__actions">
