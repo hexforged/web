@@ -21,7 +21,7 @@ use Hexforged\Web\Content\Sections;
 final class HomePage
 {
     /** @var string DISCORD Community invite URL */
-    private const DISCORD = 'https://discord.gg/DSvUNYm';
+    private const DISCORD = 'https://discord.gg/3NCUxW3wE4';
 
     /** @var string GAME_REPO The game source repository */
     private const GAME_REPO = 'https://github.com/hexforged/game';
