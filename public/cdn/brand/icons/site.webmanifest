@@ -1,0 +1,27 @@
+{
+  "name": "Hexforged",
+  "short_name": "Hexforged",
+  "icons": [
+    {
+      "src": "app/hexforged-app-dark-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/hexforged-app-dark-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/hexforged-app-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#111317",
+  "background_color": "#111317",
+  "display": "standalone"
+}

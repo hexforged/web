@@ -1,0 +1,28 @@
+{
+	"name": "hexforged/web",
+	"description": "Hexforged — official website for the upcoming online action RPG",
+	"type": "project",
+	"license": "AGPL-3.0-only",
+	"require": {
+		"php": ">=8.5"
+	},
+	"require-dev": {
+		"pestphp/pest": "^4",
+		"pestphp/pest-plugin-arch": "^4"
+	},
+	"autoload": {
+		"psr-4": {
+			"Hexforged\\Web\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"classmap": ["tests/"]
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true,
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
+	}
+}
