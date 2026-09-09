@@ -20,7 +20,9 @@ jobs:
 
       - name: 🔀 Open or update the back-merge PR
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Org policy blocks GITHUB_TOKEN from creating PRs; use the
+          # kyaulabs-bot PAT (repo secret) for pull request operations.
+          GH_TOKEN: ${{ secrets.KYAULABS_BOT_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
