@@ -73,6 +73,12 @@ og-image, palette). Full pack: `../Hexforged-Brand-Pack-v4.zip` (not in repo).
   no personal data.
 - **Deployment target: hexforged.com on the creator's VPS** — docroot is
   `public/`; Aurora CDN dir resolves as `public/../public/cdn`.
+- **All static assets (css/js/images/fonts) are served from
+  `cdn.hexforged.com`** (decision 2026-09-09). `Site::cdnBase()` switches
+  between the CDN and same-origin `/cdn` (`HEXFORGED_CDN_HOST=off`, used for
+  local dev). SRI hashes are computed from the local copies in
+  `public/cdn/`, which ship in the release tarball and are synced to the CDN
+  host at deploy time.
 - **Automation auth**: org policy blocks `GITHUB_TOKEN` from opening PRs, so
   the back-merge workflow uses the `KYAULABS_BOT_TOKEN` repo secret
   (kyaulabs-bot PAT, scope `repo`). The managed gitleaks-action needs a paid
