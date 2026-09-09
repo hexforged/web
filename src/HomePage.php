@@ -72,7 +72,7 @@ final class HomePage
             \t<a class="site-nav__brand" href="#top"><img src="{$emblem}" alt="" width="40" height="40" /> <span>Hexforged</span></a>
             \t<ul class="site-nav__links">
         {$links}\t\t</ul>
-            \t<a class="btn btn--primary site-nav__cta" href="{$discord}" rel="noopener" target="_blank">Join the Discord</a>
+            \t<a class="btn btn--primary site-nav__cta" href="{$discord}" rel="noopener" target="_blank"><i class="fa-brands fa-discord" aria-hidden="true"></i> Join the Discord</a>
             </nav>
 
         HTML;
@@ -96,8 +96,8 @@ final class HomePage
             \t\t<p class="hero__tagline">A gritty isometric online <abbr title="action role-playing game">ARPG</abbr>. Five masteries. One grimoire. A universe to take back.</p>
             \t\t<p class="hero__badge"><span class="hero__badge-dot" aria-hidden="true"></span> Coming Soon</p>
             \t\t<div class="hero__actions">
-            \t\t\t<a class="btn btn--primary" href="{$discord}" rel="noopener" target="_blank">Join the Discord</a>
-            \t\t\t<a class="btn btn--ghost" href="{$repo}" rel="noopener" target="_blank">Follow Development</a>
+            \t\t\t<a class="btn btn--primary" href="{$discord}" rel="noopener" target="_blank"><i class="fa-brands fa-discord" aria-hidden="true"></i> Join the Discord</a>
+            \t\t\t<a class="btn btn--ghost" href="{$repo}" rel="noopener" target="_blank"><i class="fa-brands fa-github" aria-hidden="true"></i> Follow Development</a>
             \t\t</div>
             \t</div>
             \t<p class="hero__scroll" aria-hidden="true">Scroll to begin the journey</p>
@@ -116,7 +116,7 @@ final class HomePage
     {
         return <<<HTML
             \t<section class="section" id="{$section->id}">
-            \t\t<p class="section__eyebrow">{$section->eyebrow}</p>
+            \t\t<p class="section__eyebrow"><i class="{$section->icon}" aria-hidden="true"></i> {$section->eyebrow}</p>
             \t\t<h2 class="section__title">{$section->title}</h2>
             \t\t<div class="section__body">{$section->body}</div>
             \t</section>
@@ -136,7 +136,7 @@ final class HomePage
         foreach ($masteries as $mastery) {
             $cards .= <<<HTML
                 \t\t\t<article class="mastery" style="--mastery: {$mastery->color}">
-                \t\t\t\t<h3 class="mastery__name">{$mastery->name}</h3>
+                \t\t\t\t<h3 class="mastery__name"><i class="{$mastery->icon}" aria-hidden="true"></i> {$mastery->name}</h3>
                 \t\t\t\t<p class="mastery__tagline">{$mastery->tagline}</p>
                 \t\t\t\t<p class="mastery__description">{$mastery->description}</p>
                 \t\t\t</article>
@@ -175,8 +175,8 @@ final class HomePage
             \t\t<h2 class="cta__title">Coming Soon</h2>
             \t\t<p class="cta__body">The forge is lit and the first world is taking shape. Follow the work as it happens.</p>
             \t\t<div class="hero__actions">
-            \t\t\t<a class="btn btn--primary" href="{$discord}" rel="noopener" target="_blank">Join the Discord</a>
-            \t\t\t<a class="btn btn--ghost" href="{$repo}" rel="noopener" target="_blank">hexforged/game</a>
+            \t\t\t<a class="btn btn--primary" href="{$discord}" rel="noopener" target="_blank"><i class="fa-brands fa-discord" aria-hidden="true"></i> Join the Discord</a>
+            \t\t\t<a class="btn btn--ghost" href="{$repo}" rel="noopener" target="_blank"><i class="fa-brands fa-github" aria-hidden="true"></i> hexforged/game</a>
             \t\t</div>
             \t</section>
 
@@ -197,8 +197,8 @@ final class HomePage
             \t<footer class="site-footer">
             \t\t<p class="site-footer__legal">&copy; {$year} Hexforged. Never pay-to-win — free-to-play, cosmetics only, forever.</p>
             \t\t<ul class="site-footer__links">
-            \t\t\t<li><a href="{$discord}" rel="noopener" target="_blank">Discord</a></li>
-            \t\t\t<li><a href="{$repo}" rel="noopener" target="_blank">Game Repository</a></li>
+            \t\t\t<li><a href="{$discord}" rel="noopener" target="_blank"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a></li>
+            \t\t\t<li><a href="{$repo}" rel="noopener" target="_blank"><i class="fa-brands fa-github" aria-hidden="true"></i> Game Repository</a></li>
             \t\t\t<li><a href="https://github.com/hexforged/web" rel="noopener" target="_blank">Site Source</a></li>
             \t\t</ul>
             \t</footer>

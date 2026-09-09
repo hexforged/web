@@ -32,7 +32,8 @@ final class Sections
                 . 'your quests and your reach across the universe, and it grows with every '
                 . 'milestone of the campaign.</p>'
                 . '<p>Fuel it, and the pages carry you between worlds. Lose everything else, and '
-                . 'the book remains. It is the heart of what you are.</p>'
+                . 'the book remains. It is the heart of what you are.</p>',
+                'fa-duotone fa-book-spells',
             ),
             new Section(
                 'worlds',
@@ -44,7 +45,8 @@ final class Sections
                 . 'the corruption back, world by world.</p>'
                 . '<p>Break a world&rsquo;s boss in its own lair and the land is restored: corruption '
                 . 'lifts, resources shift, and something unique is left behind for those who did '
-                . 'the work.</p>'
+                . 'the work.</p>',
+                'fa-duotone fa-globe',
             ),
             new Section(
                 'strongholds',
@@ -55,7 +57,8 @@ final class Sections
                 . 'stronghold stands on engineering and preparation alone.</p>'
                 . '<p>But what is built can be lost. When the assault comes, defeat means losing the '
                 . 'structure itself — though never what you have learned, and never what you have '
-                . 'truly earned. Rebuild, and hold the line next time.</p>'
+                . 'truly earned. Rebuild, and hold the line next time.</p>',
+                'fa-duotone fa-dungeon',
             ),
         ];
     }

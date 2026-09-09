@@ -21,6 +21,7 @@ final readonly class Mastery
      * @param string $tagline Short identity line.
      * @param string $description Longer description from the GDD.
      * @param string $color Resolved sRGB hex color from the brand palette.
+     * @param string $icon Font Awesome duotone class (e.g. "fa-duotone fa-fire").
      */
     public function __construct(
         public string $key,
@@ -28,6 +29,7 @@ final readonly class Mastery
         public string $tagline,
         public string $description,
         public string $color,
+        public string $icon,
     ) {
     }
 }

@@ -34,6 +34,7 @@ final class Masteries
                 'description' => 'Master of steel and timing. Freely blend martial, berserker and '
                     . 'defender paths across a broad arsenal. Perfectly timed strikes unleash '
                     . 'stronger effects — and an optional tank stands between the party and ruin.',
+                'icon' => 'fa-duotone fa-shield-halved',
             ],
             [
                 'key' => 'ranger',
@@ -42,6 +43,7 @@ final class Masteries
                 'description' => 'Bows and crossbows ruled by position, distance and moving targets. '
                     . 'Stalk the wilds with camouflage, tracking, traps and poison — or bond a single '
                     . 'companion that fights at your side.',
+                'icon' => 'fa-duotone fa-bow-arrow',
             ],
             [
                 'key' => 'elemental',
@@ -50,6 +52,7 @@ final class Masteries
                 'description' => 'Four elements in one mastery, fed by shared regenerating mana. Water '
                     . 'conducts lightning, wet terrain freezes and vegetation ignites — the battlefield '
                     . 'itself becomes your weapon.',
+                'icon' => 'fa-duotone fa-fire',
             ],
             [
                 'key' => 'blood',
@@ -58,6 +61,7 @@ final class Masteries
                 'description' => 'Pay in blood — never your life. Health sacrifice, wound setup and '
                     . 'life steal fuel a dangerous setup-and-burst style that draws power from the '
                     . 'fallen. A working name for a working darkness.',
+                'icon' => 'fa-duotone fa-vial',
             ],
             [
                 'key' => 'manipulation',
@@ -66,6 +70,7 @@ final class Masteries
                 'description' => 'Punish every enemy action with dependable, cruel efficiency. Inspired '
                     . 'by the classic Mesmer: hexes, interrupts and visible action cues, with a reprieve '
                     . 'that turns counters into your own survival.',
+                'icon' => 'fa-duotone fa-brain',
             ],
         ];
 
@@ -77,6 +82,7 @@ final class Masteries
                 $def['tagline'],
                 $def['description'],
                 $palette->get($def['key']),
+                $def['icon'],
             );
         }
         return $masteries;

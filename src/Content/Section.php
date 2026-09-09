@@ -19,12 +19,14 @@ final readonly class Section
      * @param string $eyebrow Small amber kicker line above the title.
      * @param string $title Display heading.
      * @param string $body Trusted HTML body copy.
+     * @param string $icon Font Awesome duotone class for the eyebrow.
      */
     public function __construct(
         public string $id,
         public string $eyebrow,
         public string $title,
         public string $body,
+        public string $icon,
     ) {
     }
 }
