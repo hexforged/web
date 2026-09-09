@@ -1,6 +1,6 @@
 <?php
 
-# $KYAULabs: HomePageTest.php kyau@helios 2026/09/08 -0700 Exp $
+# $KYAULabs: HomePageTest.php kyau@aura 2026/09/08 -0700 Exp $
 
 
 declare(strict_types=1);
@@ -24,7 +24,9 @@ test('renders a complete html5 document', function () {
 
     expect($html)->toStartWith('<!DOCTYPE html>');
     expect($html)->toContain('<html lang="en">');
-    expect($html)->toEndWith('</html>');
+    // Aurora emits a render-stats comment after the closing tag.
+    expect($html)->toContain("\n</body>\n</html>");
+    expect(rtrim($html))->toEndWith('-->');
 });
 
 test('renders head metadata for hexforged', function () {

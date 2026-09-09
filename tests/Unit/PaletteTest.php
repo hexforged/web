@@ -1,6 +1,6 @@
 <?php
 
-# $KYAULabs: PaletteTest.php kyau@helios 2026/09/08 -0700 Exp $
+# $KYAULabs: PaletteTest.php kyau@aura 2026/09/08 -0700 Exp $
 
 
 declare(strict_types=1);
