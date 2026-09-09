@@ -79,6 +79,10 @@ og-image, palette). Full pack: `../Hexforged-Brand-Pack-v4.zip` (not in repo).
   local dev). SRI hashes are computed from the local copies in
   `public/cdn/`, which ship in the release tarball and are synced to the CDN
   host at deploy time.
+- **Font Awesome Pro 7.2.0** (purchased) provides all icons — duotone for
+  sections/masteries, brands for Discord/GitHub. License forbids public
+  redistribution, so `public/cdn/vendor/fontawesome/` is gitignored and
+  synced to `cdn.hexforged.com` out of band; links are emitted without SRI.
 - **Automation auth**: org policy blocks `GITHUB_TOKEN` from opening PRs, so
   the back-merge workflow uses the `KYAULABS_BOT_TOKEN` repo secret
   (kyaulabs-bot PAT, scope `repo`). The managed gitleaks-action needs a paid

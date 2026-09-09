@@ -42,4 +42,24 @@ test('every mastery color resolves to a palette token', function () {
     }
 });
 
+test('every mastery has a duotone font awesome icon', function () {
+    foreach (masteries() as $mastery) {
+        expect($mastery->icon)->toMatch('/^fa-duotone fa-[a-z-]+$/');
+    }
+});
+
+test('masteries use the expected thematic icons', function () {
+    $icons = [];
+    foreach (masteries() as $mastery) {
+        $icons[$mastery->key] = $mastery->icon;
+    }
+    expect($icons)->toBe([
+        'warrior' => 'fa-duotone fa-shield-halved',
+        'ranger' => 'fa-duotone fa-bow-arrow',
+        'elemental' => 'fa-duotone fa-fire',
+        'blood' => 'fa-duotone fa-vial',
+        'manipulation' => 'fa-duotone fa-brain',
+    ]);
+});
+
 // vim: ft=php sts=4 sw=4 ts=4 et :

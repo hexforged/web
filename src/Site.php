@@ -74,6 +74,13 @@ final class Site
         $site->apple_touch = $cdn . '/brand/icons/app/hexforged-app-dark-180.png';
         $site->manifest = $cdn . '/brand/icons/site.webmanifest';
 
+        // Font Awesome Pro (commercial license): hosted on our CDN, kept out
+        // of git, and linked without SRI like Aurora's external scripts.
+        $fa = $cdn . '/vendor/fontawesome/css/fontawesome';
+        $site->fa_all = $fa . '/all.min.css';
+        $site->fa_brands = $fa . '/brands.min.css';
+        $site->fa_duotone = $fa . '/duotone.min.css';
+
         // Preload key assets from the CDN (skipped in same-origin mode:
         // Aurora's preload requires a dns-prefetch host).
         if ($cdn !== '/cdn') {

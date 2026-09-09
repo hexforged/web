@@ -68,6 +68,13 @@ computes SRI hashes from the local copies in `public/cdn/`. Deploy the
 release tarball to the web host, then sync `public/cdn/` to the CDN host.
 Set `HEXFORGED_CDN_HOST=off` to serve assets same-origin (local dev).
 
+**Font Awesome Pro** (commercial license) is deliberately not in git. Copy
+the licensed subset into `public/cdn/vendor/fontawesome/` for local dev
+(preserving the pack's `css/fontawesome/` + `fonts/fontawesome/` structure:
+`all.min.css`, `brands.min.css`, `duotone.min.css` and the matching
+`fa-solid-900` / `fa-duotone-900` / `fa-brands-400` woff2 fonts), and sync
+the same directory to the CDN host at deploy time.
+
 Point the web server docroot at `public/`. nginx example:
 
 ```nginx
