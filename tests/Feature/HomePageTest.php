@@ -99,7 +99,7 @@ test('renders content sections with matching nav anchors', function () {
 test('links to the community discord and the game repository', function () {
     $html = renderHomePage();
 
-    expect($html)->toContain('https://discord.gg/DSvUNYm');
+    expect($html)->toContain('https://discord.gg/3NCUxW3wE4');
     expect($html)->toContain('https://github.com/hexforged/game');
 });
 
