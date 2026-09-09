@@ -11,16 +11,17 @@
 
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:description" content="{{ description }}" />
-    <meta property="og:image" content="https://hexforged.com/cdn/brand/og-image.png" />
+    <meta property="og:image" content="https://cdn.hexforged.com/brand/og-image.png" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hexforged.com/" />
 
     <title>{{ title }}</title>
 
-    <link rel="icon" href="/cdn/brand/icons/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/cdn/brand/icons/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/cdn/brand/icons/app/hexforged-app-dark-180.png" />
-    <link rel="manifest" href="/cdn/brand/icons/site.webmanifest" />
+    <link rel="icon" href="{{ icon_svg }}" type="image/svg+xml" />
+    <link rel="icon" href="{{ icon_ico }}" sizes="any" />
+    <link rel="apple-touch-icon" href="{{ apple_touch }}" />
+    <link rel="manifest" href="{{ manifest }}" />
+{% preload() %}
 {% css() %}
 
 </head>
