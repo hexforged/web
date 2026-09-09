@@ -1,0 +1,612 @@
+{
+  "version": "4.0",
+  "colorSpace": "sRGB",
+  "status": "Existing logo preserved; new game tokens are proposed for visual review",
+  "tokens": [
+    {
+      "group": "identity",
+      "key": "amber",
+      "name": "Amber",
+      "hex": "#E7AE49",
+      "rgb": [
+        231,
+        174,
+        73
+      ],
+      "role": "Bespoke title and rule",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "amber-light",
+      "name": "Amber light",
+      "hex": "#FFE4A0",
+      "rgb": [
+        255,
+        228,
+        160
+      ],
+      "role": "Title bevel",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "teal",
+      "name": "Teal",
+      "hex": "#0AC9D0",
+      "rgb": [
+        10,
+        201,
+        208
+      ],
+      "role": "Potion magic",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "teal-dark",
+      "name": "Teal dark",
+      "hex": "#0E5F73",
+      "rgb": [
+        14,
+        95,
+        115
+      ],
+      "role": "Glass shadows",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "violet",
+      "name": "Violet",
+      "hex": "#A571D7",
+      "rgb": [
+        165,
+        113,
+        215
+      ],
+      "role": "Rule jewel and supporting accent",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "leather",
+      "name": "Leather",
+      "hex": "#632908",
+      "rgb": [
+        99,
+        41,
+        8
+      ],
+      "role": "Illustrated hexagonal background",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "ink",
+      "name": "Ink",
+      "hex": "#15111E",
+      "rgb": [
+        21,
+        17,
+        30
+      ],
+      "role": "Dark background",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "identity",
+      "key": "parchment",
+      "name": "Parchment",
+      "hex": "#F5EDDF",
+      "rgb": [
+        245,
+        237,
+        223
+      ],
+      "role": "Light background",
+      "source": "Existing Hexforged v3 core palette; preserved"
+    },
+    {
+      "group": "interface",
+      "key": "canvas",
+      "name": "Obsidian",
+      "hex": "#111317",
+      "rgb": [
+        17,
+        19,
+        23
+      ],
+      "role": "Screen background",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "surface",
+      "name": "Charcoal",
+      "hex": "#1C2025",
+      "rgb": [
+        28,
+        32,
+        37
+      ],
+      "role": "Opaque HUD and menu panels",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "raised",
+      "name": "Slate",
+      "hex": "#292F35",
+      "rgb": [
+        41,
+        47,
+        53
+      ],
+      "role": "Raised controls and inventory slots",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "border",
+      "name": "Forged edge",
+      "hex": "#716960",
+      "rgb": [
+        113,
+        105,
+        96
+      ],
+      "role": "Control boundaries on dark surfaces",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "text",
+      "name": "Bone",
+      "hex": "#F5EDDF",
+      "rgb": [
+        245,
+        237,
+        223
+      ],
+      "role": "Primary text",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "muted",
+      "name": "Ash",
+      "hex": "#B8B4AE",
+      "rgb": [
+        184,
+        180,
+        174
+      ],
+      "role": "Secondary text and labels",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "focus",
+      "name": "Aether light",
+      "hex": "#80E5EA",
+      "rgb": [
+        128,
+        229,
+        234
+      ],
+      "role": "Keyboard focus; selected outline",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "disabled",
+      "name": "Dormant",
+      "hex": "#777E85",
+      "rgb": [
+        119,
+        126,
+        133
+      ],
+      "role": "Inactive fills; retain readable labels",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "paper",
+      "name": "Grimoire paper",
+      "hex": "#DDD0B4",
+      "rgb": [
+        221,
+        208,
+        180
+      ],
+      "role": "Light reading surface",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "interface",
+      "key": "paper-text",
+      "name": "Soot",
+      "hex": "#25211E",
+      "rgb": [
+        37,
+        33,
+        30
+      ],
+      "role": "Text on grimoire paper",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "health",
+      "name": "Health",
+      "hex": "#F07883",
+      "rgb": [
+        240,
+        120,
+        131
+      ],
+      "role": "Health fill; heart or HEALTH label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "mana",
+      "name": "Mana",
+      "hex": "#6FB8F2",
+      "rgb": [
+        111,
+        184,
+        242
+      ],
+      "role": "Mana fill; diamond or MANA label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "stamina",
+      "name": "Stamina",
+      "hex": "#D4BD72",
+      "rgb": [
+        212,
+        189,
+        114
+      ],
+      "role": "Physical resource fill; name remains provisional",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "danger",
+      "name": "Danger",
+      "hex": "#FF8B78",
+      "rgb": [
+        255,
+        139,
+        120
+      ],
+      "role": "Harmful zones and destructive actions; triangle + label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "warning",
+      "name": "Caution",
+      "hex": "#F1C96A",
+      "rgb": [
+        241,
+        201,
+        106
+      ],
+      "role": "Crafting loss or binding notice; exclamation + label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "success",
+      "name": "Success",
+      "hex": "#8BD3A1",
+      "rgb": [
+        139,
+        211,
+        161
+      ],
+      "role": "Valid action or completed objective; check + label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "recovery",
+      "name": "Recovery",
+      "hex": "#8ADBD3",
+      "rgb": [
+        138,
+        219,
+        211
+      ],
+      "role": "Recoverable carried belongings; recovery marker + label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "semantic",
+      "key": "interrupt",
+      "name": "Interrupt",
+      "hex": "#C8B3FF",
+      "rgb": [
+        200,
+        179,
+        255
+      ],
+      "role": "Interruptible enemy action; broken-ring cue + label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "mastery",
+      "key": "warrior",
+      "name": "Warrior",
+      "hex": "#D4A574",
+      "rgb": [
+        212,
+        165,
+        116
+      ],
+      "role": "Weathered bronze identity",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "mastery",
+      "key": "ranger",
+      "name": "Ranger",
+      "hex": "#A3BE83",
+      "rgb": [
+        163,
+        190,
+        131
+      ],
+      "role": "Moss and fieldcraft identity",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "mastery",
+      "key": "elemental",
+      "name": "Elemental",
+      "hex": "#8BCBD9",
+      "rgb": [
+        139,
+        203,
+        217
+      ],
+      "role": "Elemental working descriptor; use per-element cues in combat",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "mastery",
+      "key": "blood",
+      "name": "Blood",
+      "hex": "#DF8D9D",
+      "rgb": [
+        223,
+        141,
+        157
+      ],
+      "role": "Blood working descriptor; separate from the HEALTH label",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "mastery",
+      "key": "manipulation",
+      "name": "Manipulation",
+      "hex": "#BCA7E0",
+      "rgb": [
+        188,
+        167,
+        224
+      ],
+      "role": "Manipulation working descriptor; pair with written name",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "ruins",
+      "key": "ruins-stone",
+      "name": "Basalt",
+      "hex": "#333A3E",
+      "rgb": [
+        51,
+        58,
+        62
+      ],
+      "role": "Structural mass",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "ruins",
+      "key": "ruins-dust",
+      "name": "Limestone dust",
+      "hex": "#8B8273",
+      "rgb": [
+        139,
+        130,
+        115
+      ],
+      "role": "Readable stone edges",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "ruins",
+      "key": "ruins-metal",
+      "name": "Old iron",
+      "hex": "#595F61",
+      "rgb": [
+        89,
+        95,
+        97
+      ],
+      "role": "Hardware and broken fixtures",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "ruins",
+      "key": "ruins-light",
+      "name": "Ember light",
+      "hex": "#C68A4A",
+      "rgb": [
+        198,
+        138,
+        74
+      ],
+      "role": "Sparse warm illumination",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "ruins",
+      "key": "ruins-magic",
+      "name": "Buried aether",
+      "hex": "#4F9C9C",
+      "rgb": [
+        79,
+        156,
+        156
+      ],
+      "role": "Restrained magical traces",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "jungle",
+      "key": "jungle-shadow",
+      "name": "Canopy shadow",
+      "hex": "#1A302C",
+      "rgb": [
+        26,
+        48,
+        44
+      ],
+      "role": "Deep vegetation mass",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "jungle",
+      "key": "jungle-leaf",
+      "name": "Wet foliage",
+      "hex": "#46634C",
+      "rgb": [
+        70,
+        99,
+        76
+      ],
+      "role": "Midtone foliage",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "jungle",
+      "key": "jungle-moss",
+      "name": "Moss",
+      "hex": "#7C8553",
+      "rgb": [
+        124,
+        133,
+        83
+      ],
+      "role": "Limited highlights",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "jungle",
+      "key": "jungle-earth",
+      "name": "Wet earth",
+      "hex": "#604937",
+      "rgb": [
+        96,
+        73,
+        55
+      ],
+      "role": "Grounding material",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "jungle",
+      "key": "jungle-light",
+      "name": "Filtered light",
+      "hex": "#CFBD8D",
+      "rgb": [
+        207,
+        189,
+        141
+      ],
+      "role": "Warm navigable clearings",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "corruption",
+      "key": "corruption-base",
+      "name": "Bruised stone",
+      "hex": "#302936",
+      "rgb": [
+        48,
+        41,
+        54
+      ],
+      "role": "Dark host material",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "corruption",
+      "key": "corruption-growth",
+      "name": "Infected growth",
+      "hex": "#684D6D",
+      "rgb": [
+        104,
+        77,
+        109
+      ],
+      "role": "Muted invasive material",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "corruption",
+      "key": "corruption-edge",
+      "name": "Pale fracture",
+      "hex": "#B39ABB",
+      "rgb": [
+        179,
+        154,
+        187
+      ],
+      "role": "Readable fracture edges",
+      "source": "Game extension v4; proposed art direction"
+    },
+    {
+      "group": "corruption",
+      "key": "corruption-light",
+      "name": "Unstable light",
+      "hex": "#9E77C5",
+      "rgb": [
+        158,
+        119,
+        197
+      ],
+      "role": "Sparse magical emission; never sole danger signal",
+      "source": "Game extension v4; proposed art direction"
+    }
+  ],
+  "recipes": {
+    "darkUI": {
+      "background": "canvas",
+      "panel": "surface",
+      "text": "text",
+      "secondary": "muted",
+      "primaryAction": "amber",
+      "focus": "focus"
+    },
+    "grimoire": {
+      "background": "paper",
+      "text": "paper-text",
+      "selection": "teal-dark"
+    }
+  },
+  "notes": [
+    "Do not equate palette swatches with PBR material values or URP exposure settings.",
+    "Use token names plus shapes and labels; never communicate gameplay state only through hue.",
+    "Mastery names and resource names retain GDD open decisions. No rarity tiers are invented."
+  ]
+}
