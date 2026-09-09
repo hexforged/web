@@ -36,12 +36,23 @@ final class Site
     /**
      * Resolve the base URL for static assets.
      *
-     * @return string "https://cdn.hexforged.com" in production, "/cdn"
-     *                (same-origin) when HEXFORGED_CDN_HOST=off.
+     * Two operating modes:
+     *  - production (php-fpm etc.): assets on https://cdn.hexforged.com
+     *  - local dev via the built-in server (php -S, "cli-server" SAPI):
+     *    same-origin /cdn paths
+     *
+     * HEXFORGED_CDN_HOST overrides both: "off" forces same-origin, any
+     * other value is used as the asset host (e.g. a staging CDN).
+     *
+     * @return string Asset base URL ("https://cdn.hexforged.com" or "/cdn").
      */
     public static function cdnBase(): string
     {
-        return getenv('HEXFORGED_CDN_HOST') === 'off' ? '/cdn' : 'https://' . self::CDN_HOST;
+        $override = getenv('HEXFORGED_CDN_HOST');
+        if ($override !== false && $override !== '') {
+            return $override === 'off' ? '/cdn' : 'https://' . $override;
+        }
+        return PHP_SAPI === 'cli-server' ? '/cdn' : 'https://' . self::CDN_HOST;
     }
 
     /**

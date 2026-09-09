@@ -74,11 +74,13 @@ og-image, palette). Full pack: `../Hexforged-Brand-Pack-v4.zip` (not in repo).
 - **Deployment target: hexforged.com on the creator's VPS** — docroot is
   `public/`; Aurora CDN dir resolves as `public/../public/cdn`.
 - **All static assets (css/js/images/fonts) are served from
-  `cdn.hexforged.com`** (decision 2026-09-09). `Site::cdnBase()` switches
-  between the CDN and same-origin `/cdn` (`HEXFORGED_CDN_HOST=off`, used for
-  local dev). SRI hashes are computed from the local copies in
-  `public/cdn/`, which ship in the release tarball and are synced to the CDN
-  host at deploy time.
+  `cdn.hexforged.com`** (decision 2026-09-09). Two operating modes:
+  `php -S` (cli-server SAPI) auto-serves same-origin `/cdn` paths; every
+  other SAPI uses the CDN. `HEXFORGED_CDN_HOST` overrides both. SRI hashes
+  are computed from the local copies in `public/cdn/`, which ship in the
+  release tarball and are synced to the CDN host at deploy time. The CDN
+  vhost MUST send `Access-Control-Allow-Origin` — SRI's `crossorigin`
+  attribute puts css/js/font fetches into CORS mode.
 - **Font Awesome Pro 7.2.0** (purchased) provides all icons — duotone for
   sections/masteries, brands for Discord/GitHub. License forbids public
   redistribution, so `public/cdn/vendor/fontawesome/` is gitignored and
