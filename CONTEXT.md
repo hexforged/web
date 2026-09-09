@@ -73,6 +73,11 @@ og-image, palette). Full pack: `../Hexforged-Brand-Pack-v4.zip` (not in repo).
   no personal data.
 - **Deployment target: hexforged.com on the creator's VPS** — docroot is
   `public/`; Aurora CDN dir resolves as `public/../public/cdn`.
+- **Automation auth**: org policy blocks `GITHUB_TOKEN` from opening PRs, so
+  the back-merge workflow uses the `KYAULABS_BOT_TOKEN` repo secret
+  (kyaulabs-bot PAT, scope `repo`). The managed gitleaks-action needs a paid
+  org license, so CI installs the pinned MIT gitleaks binary (v8.30.1 +
+  sha256) instead.
 - Aurora template engine (`aurora/` submodule) with overlay template
   `templates/index.html`; SRI sha512 + cache-busting `?v=` for css/js;
   page metadata/content in `src/` (`Site`, `HomePage`, `Brand\Palette`,

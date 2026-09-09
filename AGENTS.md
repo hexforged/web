@@ -99,7 +99,7 @@ optional locally). Arch tests enforce strict types and ban debug functions in
 | --- | --- | --- |
 | `test.yml` | PRs + pushes to `develop`/`feat/**`/`fix/**` | Pest on PHP 8.5, JS syntax check, commitlint, gitleaks |
 | `release.yml` | tags `v*` | git-cliff notes, deployable tarball, GitHub release |
-| `back-merge.yml` | pushes to `main` | automated PR `main` → `develop` |
+| `back-merge.yml` | pushes to `main` | automated PR `main` → `develop` (authenticates with the `KYAULABS_BOT_TOKEN` repo secret; org policy blocks `GITHUB_TOKEN` from creating PRs) |
 
 ## Definition of done
 
