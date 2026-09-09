@@ -69,7 +69,7 @@ og-image, palette). Full pack: `../Hexforged-Brand-Pack-v4.zip` (not in repo).
   region, amber ember particles, starfield; respects
   `prefers-reduced-motion`, pauses off-screen/hidden, DPR clamped.
 - **Static CTAs only** (chosen over newsletter/DB): Discord
-  (`https://discord.gg/DSvUNYm`) + `hexforged/game` repo links. No database,
+  (`https://discord.gg/3NCUxW3wE4`) + `hexforged/game` repo links. No database,
   no personal data.
 - **Deployment target: hexforged.com on the creator's VPS** — docroot is
   `public/`; Aurora CDN dir resolves as `public/../public/cdn`.
