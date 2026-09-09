@@ -1,0 +1,14 @@
+{
+	"name": "hexforged-web",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Hexforged — official website for the upcoming online action RPG",
+	"license": "AGPL-3.0-only",
+	"devDependencies": {
+		"@commitlint/cli": "^20",
+		"@commitlint/config-conventional": "^20"
+	},
+	"dependencies": {
+		"three": "^0.182.0"
+	}
+}
