@@ -62,11 +62,14 @@ Development follows strict TDD (Red → Green → Refactor) — see
 
 ### Deployment
 
-All static assets (css, js, images, fonts) are served from
-**cdn.hexforged.com** in production; the PHP app only renders HTML and
-computes SRI hashes from the local copies in `public/cdn/`. Deploy the
-release tarball to the web host, then sync `public/cdn/` to the CDN host.
-Set `HEXFORGED_CDN_HOST=off` to serve assets same-origin (local dev).
+The site has two operating modes: under `php -S` (the `cli-server` SAPI)
+all assets are same-origin `/cdn/...` automatically; everywhere else they
+are served from **cdn.hexforged.com**. `HEXFORGED_CDN_HOST` overrides both
+(`off` forces same-origin, any other value names the asset host).
+
+In production the PHP app renders HTML and computes SRI hashes from the
+local copies in `public/cdn/`; deploy the release tarball to the web host,
+then sync `public/cdn/` to the CDN host.
 
 **Font Awesome Pro** (commercial license) is deliberately not in git. Copy
 the licensed subset into `public/cdn/vendor/fontawesome/` for local dev
@@ -90,6 +93,24 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_pass unix:/run/php/php-fpm.sock;
+    }
+}
+```
+
+The CDN vhost MUST send CORS headers — SRI puts cross-origin css/js/font
+fetches into CORS mode, so without `Access-Control-Allow-Origin` the
+browser blocks them:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name cdn.hexforged.com;
+    root /var/www/hexforged-cdn;
+
+    location / {
+        add_header Access-Control-Allow-Origin "https://hexforged.com" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        try_files $uri =404;
     }
 }
 ```
