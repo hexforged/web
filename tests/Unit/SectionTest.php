@@ -21,4 +21,17 @@ test('every section has an eyebrow, title, and body', function () {
     }
 });
 
+test('every section has a duotone font awesome icon', function () {
+    $icons = [];
+    foreach (Sections::all() as $section) {
+        expect($section->icon)->toMatch('/^fa-duotone fa-[a-z-]+$/');
+        $icons[$section->id] = $section->icon;
+    }
+    expect($icons)->toBe([
+        'grimoire' => 'fa-duotone fa-book-spells',
+        'worlds' => 'fa-duotone fa-globe',
+        'strongholds' => 'fa-duotone fa-dungeon',
+    ]);
+});
+
 // vim: ft=php sts=4 sw=4 ts=4 et :

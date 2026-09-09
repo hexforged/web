@@ -123,4 +123,35 @@ test('links to the community discord and the game repository', function () {
     expect($html)->toContain('https://github.com/hexforged/game');
 });
 
+test('loads font awesome pro stylesheets from the cdn', function () {
+    $html = renderHomePage();
+
+    foreach (['all', 'brands', 'duotone'] as $sheet) {
+        expect($html)->toContain(
+            'https://cdn.hexforged.com/vendor/fontawesome/css/fontawesome/' . $sheet . '.min.css'
+        );
+    }
+});
+
+test('fontawesome pro assets are kept out of git', function () {
+    $gitignore = file_get_contents(dirname(__DIR__, 2) . '/.gitignore');
+
+    expect($gitignore)->toContain('public/cdn/vendor/fontawesome/');
+});
+
+test('renders brand icons for discord and github links', function () {
+    $html = renderHomePage();
+
+    expect($html)->toContain('fa-brands fa-discord');
+    expect($html)->toContain('fa-brands fa-github');
+});
+
+test('renders duotone icons for sections and masteries', function () {
+    $html = renderHomePage();
+
+    foreach (['fa-book-spells', 'fa-globe', 'fa-dungeon', 'fa-shield-halved', 'fa-bow-arrow', 'fa-fire', 'fa-vial', 'fa-brain'] as $icon) {
+        expect($html)->toContain($icon);
+    }
+});
+
 // vim: ft=php sts=4 sw=4 ts=4 et :
